@@ -37,7 +37,9 @@ func ThatSlice[T cmp.Ordered](t TestingT, v []T) *SliceAssertion[T] {
 func (a *SliceAssertion[T]) Length(length int, msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if len(a.v) != length {
-		str := fmt.Sprintf("got length %d but expect length %d", len(a.v), length)
+		str := fmt.Sprintf(`length mismatch:
+    got: length %d (%T) %v
+ expect: length %d`, len(a.v), a.v, a.v, length)
 		fail(a.t, str, msg...)
 	}
 	return a
@@ -47,13 +49,17 @@ func (a *SliceAssertion[T]) Length(length int, msg ...string) *SliceAssertion[T]
 func (a *SliceAssertion[T]) Equal(expect []T, msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if len(a.v) != len(expect) {
-		str := fmt.Sprintf("got length %d but expect length %d", len(a.v), len(expect))
+		str := fmt.Sprintf(`slices not equal:
+    got: (%T) %v
+ expect: (%T) %v`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 		return a
 	}
 	for i := range a.v {
 		if a.v[i] != expect[i] {
-			str := fmt.Sprintf("got element %v at index %d but expect %v", a.v[i], i, expect[i])
+			str := fmt.Sprintf(`slices not equal:
+    got: (%T) %v
+ expect: (%T) %v`, a.v, a.v, expect, expect)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -73,7 +79,9 @@ func (a *SliceAssertion[T]) NotEqual(expect []T, msg ...string) *SliceAssertion[
 			}
 		}
 		if equal {
-			str := fmt.Sprintf("got %v but expect not %v", a.v, expect)
+			str := fmt.Sprintf(`slices are equal:
+    got: (%T) %v
+ expect: not equal to %v`, a.v, a.v, expect)
 			fail(a.t, str, msg...)
 		}
 	}
@@ -84,7 +92,9 @@ func (a *SliceAssertion[T]) NotEqual(expect []T, msg ...string) *SliceAssertion[
 func (a *SliceAssertion[T]) IsNil(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if a.v != nil {
-		str := fmt.Sprintf("got %v is not nil", a.v)
+		str := fmt.Sprintf(`got [1 2] is not nil:
+    got: (%T) %v
+ expect: nil slice`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 	return a
@@ -94,7 +104,9 @@ func (a *SliceAssertion[T]) IsNil(msg ...string) *SliceAssertion[T] {
 func (a *SliceAssertion[T]) IsNotNil(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if a.v == nil {
-		str := fmt.Sprintf("got %v is nil", a.v)
+		str := fmt.Sprintf(`got [] is nil:
+    got: (%T) %v
+ expect: non-nil slice`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 	return a
@@ -104,7 +116,9 @@ func (a *SliceAssertion[T]) IsNotNil(msg ...string) *SliceAssertion[T] {
 func (a *SliceAssertion[T]) IsEmpty(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if len(a.v) != 0 {
-		str := fmt.Sprintf("got %v is not empty", a.v)
+		str := fmt.Sprintf(`slice is not empty:
+    got: (%T) %v
+ expect: empty slice`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 	return a
@@ -114,7 +128,9 @@ func (a *SliceAssertion[T]) IsEmpty(msg ...string) *SliceAssertion[T] {
 func (a *SliceAssertion[T]) IsNotEmpty(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if len(a.v) == 0 {
-		str := fmt.Sprintf("got %v is empty", a.v)
+		str := fmt.Sprintf(`slice is empty:
+    got: (%T) %v
+ expect: non-empty slice`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 	return a
@@ -128,7 +144,9 @@ func (a *SliceAssertion[T]) Contains(element T, msg ...string) *SliceAssertion[T
 			return a
 		}
 	}
-	str := fmt.Sprintf("got %v does not contain %v", a.v, element)
+	str := fmt.Sprintf(`slice does not contain the expected element:
+    got: (%T) %v
+ expect: to contain element %v`, a.v, a.v, element)
 	fail(a.t, str, msg...)
 	return a
 }
@@ -138,7 +156,9 @@ func (a *SliceAssertion[T]) NotContains(element T, msg ...string) *SliceAssertio
 	a.t.Helper()
 	for _, v := range a.v {
 		if v == element {
-			str := fmt.Sprintf("got %v contains %v", a.v, element)
+			str := fmt.Sprintf(`slice contains the unexpected element:
+    got: (%T) %v
+ expect: not to contain element %v`, a.v, a.v, element)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -164,7 +184,9 @@ func (a *SliceAssertion[T]) SubSlice(sub []T, msg ...string) *SliceAssertion[T] 
 			return a
 		}
 	}
-	str := fmt.Sprintf("got %v does not contain sub-slice %v", a.v, sub)
+	str := fmt.Sprintf(`slice does not contain sub-slice:
+    got: (%T) %v
+ expect: to contain sub-slice %v`, a.v, a.v, sub)
 	fail(a.t, str, msg...)
 	return a
 }
@@ -184,7 +206,9 @@ func (a *SliceAssertion[T]) NotSubSlice(sub []T, msg ...string) *SliceAssertion[
 			}
 		}
 		if match {
-			str := fmt.Sprintf("got %v contains sub-slice %v", a.v, sub)
+			str := fmt.Sprintf(`slice contains sub-slice:
+    got: (%T) %v
+ expect: not to contain sub-slice %v`, a.v, a.v, sub)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -196,13 +220,17 @@ func (a *SliceAssertion[T]) NotSubSlice(sub []T, msg ...string) *SliceAssertion[
 func (a *SliceAssertion[T]) HasPrefix(prefix []T, msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if len(prefix) > len(a.v) {
-		str := fmt.Sprintf("got length %d is less than prefix length %d", len(a.v), len(prefix))
+		str := fmt.Sprintf(`slice does not start with the expected prefix:
+    got: (%T) %v
+ expect: to start with %v`, a.v, a.v, prefix)
 		fail(a.t, str, msg...)
 		return a
 	}
 	for i := range prefix {
 		if a.v[i] != prefix[i] {
-			str := fmt.Sprintf("got element %v at index %d does not match prefix element %v", a.v[i], i, prefix[i])
+			str := fmt.Sprintf(`slice does not start with the expected prefix:
+    got: (%T) %v
+ expect: to start with %v`, a.v, a.v, prefix)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -214,14 +242,18 @@ func (a *SliceAssertion[T]) HasPrefix(prefix []T, msg ...string) *SliceAssertion
 func (a *SliceAssertion[T]) HasSuffix(suffix []T, msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if len(suffix) > len(a.v) {
-		str := fmt.Sprintf("got length %d is less than suffix length %d", len(a.v), len(suffix))
+		str := fmt.Sprintf(`slice does not end with the expected suffix:
+    got: (%T) %v
+ expect: to end with %v`, a.v, a.v, suffix)
 		fail(a.t, str, msg...)
 		return a
 	}
 	offset := len(a.v) - len(suffix)
 	for i := range suffix {
 		if a.v[offset+i] != suffix[i] {
-			str := fmt.Sprintf("got element %v at index %d does not match suffix element %v", a.v[offset+i], offset+i, suffix[i])
+			str := fmt.Sprintf(`slice does not end with the expected suffix:
+    got: (%T) %v
+ expect: to end with %v`, a.v, a.v, suffix)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -234,7 +266,9 @@ func (a *SliceAssertion[T]) IsIncreasing(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	for i := 1; i < len(a.v); i++ {
 		if a.v[i-1] >= a.v[i] {
-			str := fmt.Sprintf("got element %v at index %d is not greater than %v at index %d", a.v[i], i, a.v[i-1], i-1)
+			str := fmt.Sprintf(`slice is not increasing at %d:
+    got: (%T) %v
+ expect: strictly increasing order`, i, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -247,7 +281,9 @@ func (a *SliceAssertion[T]) NonIncreasing(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	for i := 1; i < len(a.v); i++ {
 		if a.v[i-1] < a.v[i] {
-			str := fmt.Sprintf("got element %v at index %d is greater than %v at index %d", a.v[i], i, a.v[i-1], i-1)
+			str := fmt.Sprintf(`slice is increasing at %d:
+    got: (%T) %v
+ expect: not strictly increasing`, i, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -260,7 +296,9 @@ func (a *SliceAssertion[T]) IsDecreasing(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	for i := 1; i < len(a.v); i++ {
 		if a.v[i-1] <= a.v[i] {
-			str := fmt.Sprintf("got element %v at index %d is not less than %v at index %d", a.v[i], i, a.v[i-1], i-1)
+			str := fmt.Sprintf(`slice is not decreasing at %d:
+    got: (%T) %v
+ expect: strictly decreasing order`, i, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -273,7 +311,9 @@ func (a *SliceAssertion[T]) NonDecreasing(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	for i := 1; i < len(a.v); i++ {
 		if a.v[i-1] > a.v[i] {
-			str := fmt.Sprintf("got element %v at index %d is less than %v at index %d", a.v[i], i, a.v[i-1], i-1)
+			str := fmt.Sprintf(`slice is decreasing at %d:
+    got: (%T) %v
+ expect: not strictly decreasing`, i, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -286,7 +326,9 @@ func (a *SliceAssertion[T]) IsSorted(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	for i := 1; i < len(a.v); i++ {
 		if a.v[i-1] > a.v[i] {
-			str := fmt.Sprintf("got element %v at index %d is greater than %v at index %d", a.v[i], i, a.v[i-1], i-1)
+			str := fmt.Sprintf(`slice is not sorted in ascending order at %d:
+    got: (%T) %v
+ expect: sorted in ascending order`, i, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -299,7 +341,9 @@ func (a *SliceAssertion[T]) IsSortedDescending(msg ...string) *SliceAssertion[T]
 	a.t.Helper()
 	for i := 1; i < len(a.v); i++ {
 		if a.v[i-1] < a.v[i] {
-			str := fmt.Sprintf("got element %v at index %d is less than %v at index %d", a.v[i], i, a.v[i-1], i-1)
+			str := fmt.Sprintf(`slice is not sorted in descending order at %d:
+    got: (%T) %v
+ expect: sorted in descending order`, i, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -313,7 +357,9 @@ func (a *SliceAssertion[T]) IsUnique(msg ...string) *SliceAssertion[T] {
 	seen := make(map[T]bool)
 	for _, v := range a.v {
 		if seen[v] {
-			str := fmt.Sprintf("got duplicate element %v", v)
+			str := fmt.Sprintf(`duplicate element found at %v:
+    got: (%T) %v
+ expect: all elements to be unique`, v, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -329,7 +375,9 @@ func (a *SliceAssertion[T]) IsUniqueBy(fn func(T) interface{}, msg ...string) *S
 	for _, v := range a.v {
 		key := fn(v)
 		if seen[key] {
-			str := fmt.Sprintf("got duplicate element %v", v)
+			str := fmt.Sprintf(`duplicate element based on key function:
+    got: (%T) %v
+ expect: all elements to be unique by length`, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -343,7 +391,9 @@ func (a *SliceAssertion[T]) All(fn func(T) bool, msg ...string) *SliceAssertion[
 	a.t.Helper()
 	for _, v := range a.v {
 		if !fn(v) {
-			str := fmt.Sprintf("got element %v does not satisfy the condition", v)
+			str := fmt.Sprintf(`element does not satisfy condition:
+    got: (%T) %v
+ expect: all elements should satisfy condition`, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}
@@ -359,7 +409,9 @@ func (a *SliceAssertion[T]) Any(fn func(T) bool, msg ...string) *SliceAssertion[
 			return a
 		}
 	}
-	str := fmt.Sprintf("no element in %v satisfies the condition", a.v)
+	str := fmt.Sprintf(`no element satisfies the condition:
+    got: (%T) %v
+ expect: any element should satisfy condition`, a.v, a.v)
 	fail(a.t, str, msg...)
 	return a
 }
@@ -369,7 +421,9 @@ func (a *SliceAssertion[T]) None(fn func(T) bool, msg ...string) *SliceAssertion
 	a.t.Helper()
 	for _, v := range a.v {
 		if fn(v) {
-			str := fmt.Sprintf("got element %v satisfies the condition", v)
+			str := fmt.Sprintf(`element satisfies the condition:
+    got: (%T) %v
+ expect: no element should satisfy condition`, a.v, a.v)
 			fail(a.t, str, msg...)
 			return a
 		}

@@ -42,7 +42,9 @@ func ThatNumber[T Number](t TestingT, v T) *NumberAssertion[T] {
 func (a *NumberAssertion[T]) Equal(expect T, msg ...string) {
 	a.t.Helper()
 	if a.v != expect {
-		str := fmt.Sprintf("got (%T) %v but expect (%T) %v", a.v, a.v, expect, expect)
+		str := fmt.Sprintf(`values not equal:
+    got: (%T) %v
+ expect: (%T) %v`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 	}
 }
@@ -51,7 +53,9 @@ func (a *NumberAssertion[T]) Equal(expect T, msg ...string) {
 func (a *NumberAssertion[T]) NotEqual(expect T, msg ...string) {
 	a.t.Helper()
 	if a.v == expect {
-		str := fmt.Sprintf("got (%T) %v but expect not (%T) %v", a.v, a.v, expect, expect)
+		str := fmt.Sprintf(`values are equal:
+    got: (%T) %v
+ expect: not equal to (%T) %v`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 	}
 }
@@ -60,7 +64,9 @@ func (a *NumberAssertion[T]) NotEqual(expect T, msg ...string) {
 func (a *NumberAssertion[T]) GreaterThan(expect T, msg ...string) {
 	a.t.Helper()
 	if a.v <= expect {
-		str := fmt.Sprintf("got (%T) %v but expect greater than (%T) %v", a.v, a.v, expect, expect)
+		str := fmt.Sprintf(`value not greater than expected:
+    got: (%T) %v
+ expect: greater than (%T) %v`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 	}
 }
@@ -69,7 +75,9 @@ func (a *NumberAssertion[T]) GreaterThan(expect T, msg ...string) {
 func (a *NumberAssertion[T]) GreaterOrEqual(expect T, msg ...string) {
 	a.t.Helper()
 	if a.v < expect {
-		str := fmt.Sprintf("got (%T) %v but expect greater than or equal to (%T) %v", a.v, a.v, expect, expect)
+		str := fmt.Sprintf(`value not greater than or equal to expected:
+    got: (%T) %v
+ expect: greater than or equal to (%T) %v`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 	}
 }
@@ -78,7 +86,9 @@ func (a *NumberAssertion[T]) GreaterOrEqual(expect T, msg ...string) {
 func (a *NumberAssertion[T]) LessThan(expect T, msg ...string) {
 	a.t.Helper()
 	if a.v >= expect {
-		str := fmt.Sprintf("got (%T) %v but expect less than (%T) %v", a.v, a.v, expect, expect)
+		str := fmt.Sprintf(`value not less than expected:
+    got: (%T) %v
+ expect: less than (%T) %v`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 	}
 }
@@ -87,7 +97,9 @@ func (a *NumberAssertion[T]) LessThan(expect T, msg ...string) {
 func (a *NumberAssertion[T]) LessOrEqual(expect T, msg ...string) {
 	a.t.Helper()
 	if a.v > expect {
-		str := fmt.Sprintf("got (%T) %v but expect less than or equal to (%T) %v", a.v, a.v, expect, expect)
+		str := fmt.Sprintf(`value not less than or equal to expected:
+    got: (%T) %v
+ expect: less than or equal to (%T) %v`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 	}
 }
@@ -96,7 +108,9 @@ func (a *NumberAssertion[T]) LessOrEqual(expect T, msg ...string) {
 func (a *NumberAssertion[T]) IsZero(msg ...string) {
 	a.t.Helper()
 	if a.v != 0 {
-		str := fmt.Sprintf("got (%T) %v but expect zero", a.v, a.v)
+		str := fmt.Sprintf(`value is not zero:
+    got: (%T) %v
+ expect: zero`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -105,7 +119,9 @@ func (a *NumberAssertion[T]) IsZero(msg ...string) {
 func (a *NumberAssertion[T]) IsNotZero(msg ...string) {
 	a.t.Helper()
 	if a.v == 0 {
-		str := fmt.Sprintf("got (%T) %v but expect not zero", a.v, a.v)
+		str := fmt.Sprintf(`value is zero:
+    got: (%T) %v
+ expect: non-zero`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -114,7 +130,9 @@ func (a *NumberAssertion[T]) IsNotZero(msg ...string) {
 func (a *NumberAssertion[T]) IsPositive(msg ...string) {
 	a.t.Helper()
 	if a.v <= 0 {
-		str := fmt.Sprintf("got (%T) %v but expect positive", a.v, a.v)
+		str := fmt.Sprintf(`value is not positive:
+    got: (%T) %v
+ expect: positive`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -123,7 +141,9 @@ func (a *NumberAssertion[T]) IsPositive(msg ...string) {
 func (a *NumberAssertion[T]) IsNegative(msg ...string) {
 	a.t.Helper()
 	if a.v >= 0 {
-		str := fmt.Sprintf("got (%T) %v but expect negative", a.v, a.v)
+		str := fmt.Sprintf(`value is not negative:
+    got: (%T) %v
+ expect: negative`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -132,7 +152,9 @@ func (a *NumberAssertion[T]) IsNegative(msg ...string) {
 func (a *NumberAssertion[T]) IsNonNegative(msg ...string) {
 	a.t.Helper()
 	if a.v < 0 {
-		str := fmt.Sprintf("got (%T) %v but expect non-negative", a.v, a.v)
+		str := fmt.Sprintf(`value is negative:
+    got: (%T) %v
+ expect: non-negative`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -141,7 +163,9 @@ func (a *NumberAssertion[T]) IsNonNegative(msg ...string) {
 func (a *NumberAssertion[T]) IsNonPositive(msg ...string) {
 	a.t.Helper()
 	if a.v > 0 {
-		str := fmt.Sprintf("got (%T) %v but expect non-positive", a.v, a.v)
+		str := fmt.Sprintf(`value is positive:
+    got: (%T) %v
+ expect: non-positive`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -150,7 +174,9 @@ func (a *NumberAssertion[T]) IsNonPositive(msg ...string) {
 func (a *NumberAssertion[T]) IsBetween(lower, upper T, msg ...string) {
 	a.t.Helper()
 	if a.v < lower || a.v > upper {
-		str := fmt.Sprintf("got (%T) %v but expect between (%T) %v and (%T) %v", a.v, a.v, lower, lower, upper, upper)
+		str := fmt.Sprintf(`value not within range:
+    got: (%T) %v
+ expect: between (%T) %v and (%T) %v`, a.v, a.v, lower, lower, upper, upper)
 		fail(a.t, str, msg...)
 	}
 }
@@ -159,7 +185,9 @@ func (a *NumberAssertion[T]) IsBetween(lower, upper T, msg ...string) {
 func (a *NumberAssertion[T]) IsNotBetween(lower, upper T, msg ...string) {
 	a.t.Helper()
 	if a.v >= lower && a.v <= upper {
-		str := fmt.Sprintf("got (%T) %v but expect not between (%T) %v and (%T) %v", a.v, a.v, lower, lower, upper, upper)
+		str := fmt.Sprintf(`value is within range:
+    got: (%T) %v
+ expect: not between (%T) %v and (%T) %v`, a.v, a.v, lower, lower, upper, upper)
 		fail(a.t, str, msg...)
 	}
 }
@@ -172,7 +200,9 @@ func (a *NumberAssertion[T]) IsInDelta(expect T, delta T, msg ...string) {
 		diff = -diff
 	}
 	if diff > delta {
-		str := fmt.Sprintf("got (%T) %v is not within delta (%T) %v of (%T) %v", a.v, a.v, delta, delta, expect, expect)
+		str := fmt.Sprintf(`value not within delta:
+    got: (%T) %v
+ expect: within ±(%T) %v of (%T) %v`, a.v, a.v, delta, delta, expect, expect)
 		fail(a.t, str, msg...)
 	}
 }
@@ -181,7 +211,9 @@ func (a *NumberAssertion[T]) IsInDelta(expect T, delta T, msg ...string) {
 func (a *NumberAssertion[T]) IsNaN(msg ...string) {
 	a.t.Helper()
 	if !isNaN(a.v) {
-		str := fmt.Sprintf("got (%T) %v but expect NaN", a.v, a.v)
+		str := fmt.Sprintf(`value is not NaN:
+    got: (%T) %v
+ expect: NaN`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -190,7 +222,9 @@ func (a *NumberAssertion[T]) IsNaN(msg ...string) {
 func (a *NumberAssertion[T]) IsInf(sign int, msg ...string) {
 	a.t.Helper()
 	if !isInf(a.v, sign) {
-		str := fmt.Sprintf("got (%T) %v but expect infinite with sign %d", a.v, a.v, sign)
+		str := fmt.Sprintf(`value is not infinite:
+    got: (%T) %v
+ expect: infinite with sign %d`, a.v, a.v, sign)
 		fail(a.t, str, msg...)
 	}
 }
@@ -199,7 +233,9 @@ func (a *NumberAssertion[T]) IsInf(sign int, msg ...string) {
 func (a *NumberAssertion[T]) IsFinite(msg ...string) {
 	a.t.Helper()
 	if isNaN(a.v) || isInf(a.v, 0) {
-		str := fmt.Sprintf("got (%T) %v but expect finite", a.v, a.v)
+		str := fmt.Sprintf(`value is not finite:
+    got: (%T) %v
+ expect: finite`, a.v, a.v)
 		fail(a.t, str, msg...)
 	}
 }

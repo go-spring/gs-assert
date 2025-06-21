@@ -22,6 +22,18 @@ import (
 	"github.com/go-spring/assert"
 )
 
+func TestString_Length(t *testing.T) {
+	m := new(MockTestingT)
+	assert.ThatString(m, "0").Length(1)
+	assert.ThatString(t, m.String()).Equal("")
+
+	m.Reset()
+	assert.ThatString(m, "0").Length(0)
+	assert.ThatString(t, m.String()).Equal(`length mismatch:
+    got: length 1 (string) "0"
+ expect: length 0`)
+}
+
 func TestString_Equal(t *testing.T) {
 	m := new(MockTestingT)
 	assert.ThatString(m, "0").Equal("0")
