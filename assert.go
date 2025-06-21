@@ -85,16 +85,16 @@ func That(t TestingT, v interface{}) *Assertion {
 	}
 }
 
-// True asserts that got is true. It reports an error if the value is false.
-func (a *Assertion) True(msg ...string) {
+// IsTrue asserts that got is true. It reports an error if the value is false.
+func (a *Assertion) IsTrue(msg ...string) {
 	a.t.Helper()
 	if !a.v.(bool) {
 		fail(a.t, "got false but expect true", msg...)
 	}
 }
 
-// False asserts that got is false. It reports an error if the value is true.
-func (a *Assertion) False(msg ...string) {
+// IsFalse asserts that got is false. It reports an error if the value is true.
+func (a *Assertion) IsFalse(msg ...string) {
 	a.t.Helper()
 	if a.v.(bool) {
 		fail(a.t, "got true but expect false", msg...)
@@ -116,8 +116,8 @@ func isNil(v reflect.Value) bool {
 	}
 }
 
-// Nil asserts that got is nil. It reports an error if the value is not nil.
-func (a *Assertion) Nil(msg ...string) {
+// IsNil asserts that got is nil. It reports an error if the value is not nil.
+func (a *Assertion) IsNil(msg ...string) {
 	a.t.Helper()
 	// Why can't we use got==nil to judge？Because if
 	// a := (*int)(nil)        // %T == *int
@@ -129,8 +129,8 @@ func (a *Assertion) Nil(msg ...string) {
 	}
 }
 
-// NotNil asserts that got is not nil. It reports an error if the value is nil.
-func (a *Assertion) NotNil(msg ...string) {
+// IsNotNil asserts that got is not nil. It reports an error if the value is nil.
+func (a *Assertion) IsNotNil(msg ...string) {
 	a.t.Helper()
 	if isNil(reflect.ValueOf(a.v)) {
 		fail(a.t, "got nil but expect not nil", msg...)
@@ -157,9 +157,9 @@ func (a *Assertion) NotEqual(expect interface{}, msg ...string) {
 	}
 }
 
-// Same asserts that the wrapped value v and expect are the same (using Go ==).
+// IsSame asserts that the wrapped value v and expect are the same (using Go ==).
 // It reports an error if v != expect.
-func (a *Assertion) Same(expect interface{}, msg ...string) {
+func (a *Assertion) IsSame(expect interface{}, msg ...string) {
 	a.t.Helper()
 	if a.v != expect {
 		str := fmt.Sprintf("got (%T) %v but expect (%T) %v", a.v, a.v, expect, expect)
@@ -167,9 +167,9 @@ func (a *Assertion) Same(expect interface{}, msg ...string) {
 	}
 }
 
-// NotSame asserts that the wrapped value v and expect are not the same (using Go !=).
+// IsNotSame asserts that the wrapped value v and expect are not the same (using Go !=).
 // It reports an error if v == expect.
-func (a *Assertion) NotSame(expect interface{}, msg ...string) {
+func (a *Assertion) IsNotSame(expect interface{}, msg ...string) {
 	a.t.Helper()
 	if a.v == expect {
 		str := fmt.Sprintf("expect not (%T) %v", expect, expect)
@@ -177,10 +177,10 @@ func (a *Assertion) NotSame(expect interface{}, msg ...string) {
 	}
 }
 
-// TypeOf asserts that the type of the wrapped value v is assignable to the type of expect.
+// IsTypeOf asserts that the type of the wrapped value v is assignable to the type of expect.
 // It supports pointer to interface types.
 // It reports an error if the types are not assignable.
-func (a *Assertion) TypeOf(expect interface{}, msg ...string) {
+func (a *Assertion) IsTypeOf(expect interface{}, msg ...string) {
 	a.t.Helper()
 
 	e1 := reflect.TypeOf(a.v)
@@ -373,32 +373,12 @@ func (a *Assertion) IsZero(msg ...string) {
 	}
 }
 
-// NotZero asserts that the wrapped value v is not the zero value for its type.
+// IsNotZero asserts that the wrapped value v is not the zero value for its type.
 // It reports an error if the value is zero.
-func (a *Assertion) NotZero(msg ...string) {
+func (a *Assertion) IsNotZero(msg ...string) {
 	a.t.Helper()
 	if reflect.ValueOf(a.v).IsZero() {
 		str := fmt.Sprintf("got zero value but expect not zero for type %T", a.v)
-		fail(a.t, str, msg...)
-	}
-}
-
-// IsType asserts that the wrapped value v is of the same type as expect.
-// It reports an error if the types are not the same.
-func (a *Assertion) IsType(expect interface{}, msg ...string) {
-	a.t.Helper()
-	if reflect.TypeOf(a.v) != reflect.TypeOf(expect) {
-		str := fmt.Sprintf("got type (%s) but expect type (%s)", reflect.TypeOf(a.v), reflect.TypeOf(expect))
-		fail(a.t, str, msg...)
-	}
-}
-
-// IsNotType asserts that the wrapped value v is not of the same type as expect.
-// It reports an error if the types are the same.
-func (a *Assertion) IsNotType(expect interface{}, msg ...string) {
-	a.t.Helper()
-	if reflect.TypeOf(a.v) == reflect.TypeOf(expect) {
-		str := fmt.Sprintf("got type (%s) but expect not type (%s)", reflect.TypeOf(a.v), reflect.TypeOf(expect))
 		fail(a.t, str, msg...)
 	}
 }

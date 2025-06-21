@@ -61,8 +61,8 @@ func (a *ErrorAssertion) Is(target error, msg ...string) {
 	}
 }
 
-// IsNot reports a test failure if the error is the same as the given error.
-func (a *ErrorAssertion) IsNot(target error, msg ...string) {
+// NotIs reports a test failure if the error is the same as the given error.
+func (a *ErrorAssertion) NotIs(target error, msg ...string) {
 	a.t.Helper()
 	if errors.Is(target, a.v) {
 		fail(a.t, "expect error not to be: "+target.Error(), msg...)

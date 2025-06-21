@@ -101,8 +101,8 @@ func (a *NumberAssertion[T]) IsZero(msg ...string) {
 	}
 }
 
-// NotZero asserts that the number value is not zero.
-func (a *NumberAssertion[T]) NotZero(msg ...string) {
+// IsNotZero asserts that the number value is not zero.
+func (a *NumberAssertion[T]) IsNotZero(msg ...string) {
 	a.t.Helper()
 	if a.v == 0 {
 		str := fmt.Sprintf("got (%T) %v but expect not zero", a.v, a.v)
@@ -146,8 +146,8 @@ func (a *NumberAssertion[T]) IsNonPositive(msg ...string) {
 	}
 }
 
-// Between asserts that the number value is between the lower and upper bounds (inclusive).
-func (a *NumberAssertion[T]) Between(lower, upper T, msg ...string) {
+// IsBetween asserts that the number value is between the lower and upper bounds.
+func (a *NumberAssertion[T]) IsBetween(lower, upper T, msg ...string) {
 	a.t.Helper()
 	if a.v < lower || a.v > upper {
 		str := fmt.Sprintf("got (%T) %v but expect between (%T) %v and (%T) %v", a.v, a.v, lower, lower, upper, upper)
@@ -155,8 +155,8 @@ func (a *NumberAssertion[T]) Between(lower, upper T, msg ...string) {
 	}
 }
 
-// NotBetween asserts that the number value is not between the lower and upper bounds (exclusive).
-func (a *NumberAssertion[T]) NotBetween(lower, upper T, msg ...string) {
+// IsNotBetween asserts that the number value is not between the lower and upper bounds.
+func (a *NumberAssertion[T]) IsNotBetween(lower, upper T, msg ...string) {
 	a.t.Helper()
 	if a.v >= lower && a.v <= upper {
 		str := fmt.Sprintf("got (%T) %v but expect not between (%T) %v and (%T) %v", a.v, a.v, lower, lower, upper, upper)
@@ -164,8 +164,8 @@ func (a *NumberAssertion[T]) NotBetween(lower, upper T, msg ...string) {
 	}
 }
 
-// InDelta asserts that the number value is within the delta range of the expected value.
-func (a *NumberAssertion[T]) InDelta(expect T, delta T, msg ...string) {
+// IsInDelta asserts that the number value is within the delta range of the expected value.
+func (a *NumberAssertion[T]) IsInDelta(expect T, delta T, msg ...string) {
 	a.t.Helper()
 	diff := a.v - expect
 	if diff < 0 {

@@ -77,7 +77,7 @@ func (a *StringAssertion) NotEqual(expect string, msg ...string) *StringAssertio
 // JSONEqual unmarshals both the actual and expected JSON strings into generic interfaces,
 // then reports a test failure if their resulting structures are not deeply equal.
 // If either string is invalid JSON, the test will fail with the unmarshal error.
-func (a *StringAssertion) JSONEqual(expect string, msg ...string) {
+func (a *StringAssertion) JSONEqual(expect string, msg ...string) *StringAssertion {
 	a.t.Helper()
 	var gotJson interface{}
 	if err := json.Unmarshal([]byte(a.v), &gotJson); err != nil {
@@ -86,7 +86,7 @@ func (a *StringAssertion) JSONEqual(expect string, msg ...string) {
  expect: (%T) %q
   error: %v`, a.v, a.v, expect, expect, err)
 		fail(a.t, str, msg...)
-		return
+		return a
 	}
 	var expectJson interface{}
 	if err := json.Unmarshal([]byte(expect), &expectJson); err != nil {
@@ -95,7 +95,7 @@ func (a *StringAssertion) JSONEqual(expect string, msg ...string) {
  expect: (%T) %q
   error: %v`, a.v, a.v, expect, expect, err)
 		fail(a.t, str, msg...)
-		return
+		return a
 	}
 	if !reflect.DeepEqual(gotJson, expectJson) {
 		str := fmt.Sprintf(`JSON structures are not equal:
@@ -103,10 +103,11 @@ func (a *StringAssertion) JSONEqual(expect string, msg ...string) {
  expect: (%T) %q`, a.v, a.v, expect, expect)
 		fail(a.t, str, msg...)
 	}
+	return a
 }
 
 // Matches reports a test failure if the actual string does not match the given regular expression.
-func (a *StringAssertion) Matches(expr string, msg ...string) {
+func (a *StringAssertion) Matches(expr string, msg ...string) *StringAssertion {
 	a.t.Helper()
 	if ok, err := regexp.MatchString(expr, a.v); !ok {
 		str := fmt.Sprintf(`string does not match the pattern:
@@ -117,11 +118,12 @@ func (a *StringAssertion) Matches(expr string, msg ...string) {
 		}
 		fail(a.t, str, msg...)
 	}
+	return a
 }
 
 // EqualFold reports a test failure if the actual string and the given string
 // are not equal under Unicode case-folding.
-func (a *StringAssertion) EqualFold(s string, msg ...string) {
+func (a *StringAssertion) EqualFold(s string, msg ...string) *StringAssertion {
 	a.t.Helper()
 	if !strings.EqualFold(a.v, s) {
 		str := fmt.Sprintf(`strings are not equal under case-folding:
@@ -129,6 +131,7 @@ func (a *StringAssertion) EqualFold(s string, msg ...string) {
  expect: (%T) %q`, a.v, a.v, s, s)
 		fail(a.t, str, msg...)
 	}
+	return a
 }
 
 // HasPrefix fails the test if the actual string does not start with the specified prefix.

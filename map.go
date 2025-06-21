@@ -34,29 +34,11 @@ func ThatMap[K comparable, V comparable](t TestingT, v map[K]V) *MapAssertion[K,
 	}
 }
 
-// Len asserts that the map has the expected length.
-func (a *MapAssertion[K, V]) Len(length int, msg ...string) {
+// Length asserts that the map has the expected length.
+func (a *MapAssertion[K, V]) Length(length int, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != length {
 		str := fmt.Sprintf("got length %d but expect length %d", len(a.v), length)
-		fail(a.t, str, msg...)
-	}
-}
-
-// Empty asserts that the map is empty.
-func (a *MapAssertion[K, V]) Empty(msg ...string) {
-	a.t.Helper()
-	if len(a.v) != 0 {
-		str := fmt.Sprintf("got %v is not empty", a.v)
-		fail(a.t, str, msg...)
-	}
-}
-
-// NotEmpty asserts that the map is not empty.
-func (a *MapAssertion[K, V]) NotEmpty(msg ...string) {
-	a.t.Helper()
-	if len(a.v) == 0 {
-		str := fmt.Sprintf("got %v is empty", a.v)
 		fail(a.t, str, msg...)
 	}
 }
@@ -93,6 +75,24 @@ func (a *MapAssertion[K, V]) NotEqual(expect map[K]V, msg ...string) {
 			str := fmt.Sprintf("got %v but expect not %v", a.v, expect)
 			fail(a.t, str, msg...)
 		}
+	}
+}
+
+// IsEmpty asserts that the map is empty.
+func (a *MapAssertion[K, V]) IsEmpty(msg ...string) {
+	a.t.Helper()
+	if len(a.v) != 0 {
+		str := fmt.Sprintf("got %v is not empty", a.v)
+		fail(a.t, str, msg...)
+	}
+}
+
+// IsNotEmpty asserts that the map is not empty.
+func (a *MapAssertion[K, V]) IsNotEmpty(msg ...string) {
+	a.t.Helper()
+	if len(a.v) == 0 {
+		str := fmt.Sprintf("got %v is empty", a.v)
+		fail(a.t, str, msg...)
 	}
 }
 

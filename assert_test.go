@@ -49,77 +49,77 @@ func (m *MockTestingT) String() string {
 
 func TestTrue(t *testing.T) {
 	m := new(MockTestingT)
-	assert.That(m, true).True()
+	assert.That(m, true).IsTrue()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, false).True()
+	assert.That(m, false).IsTrue()
 	assert.ThatString(t, m.String()).Equal("got false but expect true")
 
 	m.Reset()
-	assert.That(m, false).True("param (index=0)")
+	assert.That(m, false).IsTrue("param (index=0)")
 	assert.ThatString(t, m.String()).Equal("got false but expect true\nmessage: param (index=0)")
 }
 
 func TestFalse(t *testing.T) {
 	m := new(MockTestingT)
-	assert.That(m, false).False()
+	assert.That(m, false).IsFalse()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, true).False()
+	assert.That(m, true).IsFalse()
 	assert.ThatString(t, m.String()).Equal("got true but expect false")
 
 	m.Reset()
-	assert.That(m, true).False("param (index=0)")
+	assert.That(m, true).IsFalse("param (index=0)")
 	assert.ThatString(t, m.String()).Equal(`got true but expect false
 message: param (index=0)`)
 }
 
 func TestNil(t *testing.T) {
 	m := new(MockTestingT)
-	assert.That(m, nil).Nil()
+	assert.That(m, nil).IsNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
 	var a []string
-	assert.That(m, a).Nil()
+	assert.That(m, a).IsNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
 	var s map[string]string
-	assert.That(m, s).Nil()
+	assert.That(m, s).IsNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, 3).Nil()
+	assert.That(m, 3).IsNil()
 	assert.ThatString(t, m.String()).Equal("got (int) 3 but expect nil")
 
 	m.Reset()
-	assert.That(m, 3).Nil("param (index=0)")
+	assert.That(m, 3).IsNil("param (index=0)")
 	assert.ThatString(t, m.String()).Equal(`got (int) 3 but expect nil
 message: param (index=0)`)
 }
 
 func TestNotNil(t *testing.T) {
 	m := new(MockTestingT)
-	assert.That(m, 3).NotNil()
+	assert.That(m, 3).IsNotNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, make([]string, 0)).NotNil()
+	assert.That(m, make([]string, 0)).IsNotNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, make(map[string]string)).NotNil()
+	assert.That(m, make(map[string]string)).IsNotNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, nil).NotNil()
+	assert.That(m, nil).IsNotNil()
 	assert.ThatString(t, m.String()).Equal("got nil but expect not nil")
 
 	m.Reset()
-	assert.That(m, nil).NotNil("param (index=0)")
+	assert.That(m, nil).IsNotNil("param (index=0)")
 	assert.ThatString(t, m.String()).Equal(`got nil but expect not nil
 message: param (index=0)`)
 }
@@ -222,38 +222,38 @@ message: param (index=0)`)
 
 func TestThat_Same(t *testing.T) {
 	m := new(MockTestingT)
-	assert.That(m, "0").Same("0")
+	assert.That(m, "0").IsSame("0")
 
 	m.Reset()
-	assert.That(m, 0).Same("0")
+	assert.That(m, 0).IsSame("0")
 	assert.ThatString(t, m.String()).Equal("got (int) 0 but expect (string) 0")
 
 	m.Reset()
-	assert.That(m, 0).Same("0", "param (index=0)")
+	assert.That(m, 0).IsSame("0", "param (index=0)")
 	assert.ThatString(t, m.String()).Equal(`got (int) 0 but expect (string) 0
 message: param (index=0)`)
 }
 
 func TestThat_NotSame(t *testing.T) {
 	m := new(MockTestingT)
-	assert.That(m, "0").NotSame(0)
+	assert.That(m, "0").IsNotSame(0)
 
 	m.Reset()
-	assert.That(m, "0").NotSame("0")
+	assert.That(m, "0").IsNotSame("0")
 	assert.ThatString(t, m.String()).Equal("expect not (string) 0")
 
 	m.Reset()
-	assert.That(m, "0").NotSame("0", "param (index=0)")
+	assert.That(m, "0").IsNotSame("0", "param (index=0)")
 	assert.ThatString(t, m.String()).Equal(`expect not (string) 0
 message: param (index=0)`)
 }
 
 func TestThat_TypeOf(t *testing.T) {
 	m := new(MockTestingT)
-	assert.That(m, new(int)).TypeOf((*int)(nil))
+	assert.That(m, new(int)).IsTypeOf((*int)(nil))
 
 	m.Reset()
-	assert.That(m, "string").TypeOf((*fmt.Stringer)(nil))
+	assert.That(m, "string").IsTypeOf((*fmt.Stringer)(nil))
 	assert.ThatString(t, m.String()).Equal("got type (string) but expect type (fmt.Stringer)")
 }
 
