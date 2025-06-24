@@ -19,6 +19,7 @@
 package assert
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -36,7 +37,7 @@ func fail(t TestingT, str string, msg ...string) {
 	if len(msg) > 0 {
 		str += "\nmessage: " + strings.Join(msg, ", ")
 	}
-	t.Error(str)
+	t.Error("Assertion failed: " + str)
 }
 
 func recovery(fn func()) (str string) {
@@ -68,6 +69,32 @@ func Panic(t TestingT, fn func(), expr string, msg ...string) {
 		fail(t, "did not panic", msg...)
 	} else {
 		matches(t, str, expr, msg...)
+	}
+}
+
+type AssertionConfig struct {
+	outputValueAsJSON bool
+}
+
+// OutputValue returns the value as a string.
+func (c *AssertionConfig) OutputValue(v interface{}) string {
+	if c.outputValueAsJSON {
+		b, err := json.Marshal(v)
+		if err != nil {
+			return err.Error()
+		}
+		return string(b)
+	} else {
+		return fmt.Sprintf("%v", v)
+	}
+}
+
+type AssertionOption func(*AssertionConfig)
+
+// OutputValueAsJSON configures whether to output the value as json string.
+func OutputValueAsJSON(enable bool) AssertionOption {
+	return func(c *AssertionConfig) {
+		c.outputValueAsJSON = enable
 	}
 }
 

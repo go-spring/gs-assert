@@ -30,23 +30,23 @@ func TestError_Matches(t *testing.T) {
 
 	m.Reset()
 	assert.ThatError(m, errors.New("there's no error")).Matches(`an error \`)
-	assert.ThatString(t, m.String()).Equal("invalid pattern")
+	assert.ThatString(t, m.String()).Equal("Assertion failed: invalid pattern")
 
 	m.Reset()
 	assert.ThatError(m, nil).Matches("an error")
-	assert.ThatString(t, m.String()).Equal("expect not nil error")
+	assert.ThatString(t, m.String()).Equal("Assertion failed: expect not nil error")
 
 	m.Reset()
-	assert.ThatError(m, nil).Matches("an error", "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`expect not nil error
-message: param (index=0)`)
+	assert.ThatError(m, nil).Matches("an error", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expect not nil error
+message: index is 0`)
 
 	m.Reset()
 	assert.ThatError(m, errors.New("there's no error")).Matches("an error")
-	assert.ThatString(t, m.String()).Equal(`got "there's no error" which does not match "an error"`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: got "there's no error" which does not match "an error"`)
 
 	m.Reset()
-	assert.ThatError(m, errors.New("there's no error")).Matches("an error", "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`got "there's no error" which does not match "an error"
-message: param (index=0)`)
+	assert.ThatError(m, errors.New("there's no error")).Matches("an error", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: got "there's no error" which does not match "an error"
+message: index is 0`)
 }

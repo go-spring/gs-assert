@@ -30,16 +30,16 @@ func TestNumber_Equal(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).Equal(10)
-	assert.ThatString(t, m.String()).Equal(`values not equal:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: values not equal:
     got: (int) 5
  expect: (int) 10`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Equal(10, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`values not equal:
+	assert.ThatNumber(m, 5).Equal(10, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: values not equal:
     got: (int) 5
  expect: (int) 10
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_NotEqual(t *testing.T) {
@@ -49,16 +49,16 @@ func TestNumber_NotEqual(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).NotEqual(5)
-	assert.ThatString(t, m.String()).Equal(`values are equal:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: values are equal:
     got: (int) 5
  expect: not equal to (int) 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).NotEqual(5, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`values are equal:
+	assert.ThatNumber(m, 5).NotEqual(5, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: values are equal:
     got: (int) 5
  expect: not equal to (int) 5
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_GreaterThan(t *testing.T) {
@@ -68,16 +68,16 @@ func TestNumber_GreaterThan(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).GreaterThan(10)
-	assert.ThatString(t, m.String()).Equal(`value not greater than expected:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not greater than expected:
     got: (int) 5
  expect: greater than (int) 10`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).GreaterThan(10, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value not greater than expected:
+	assert.ThatNumber(m, 5).GreaterThan(10, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not greater than expected:
     got: (int) 5
  expect: greater than (int) 10
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_GreaterOrEqual(t *testing.T) {
@@ -87,16 +87,16 @@ func TestNumber_GreaterOrEqual(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).GreaterOrEqual(10)
-	assert.ThatString(t, m.String()).Equal(`value not greater than or equal to expected:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not greater than or equal to expected:
     got: (int) 5
  expect: greater than or equal to (int) 10`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).GreaterOrEqual(10, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value not greater than or equal to expected:
+	assert.ThatNumber(m, 5).GreaterOrEqual(10, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not greater than or equal to expected:
     got: (int) 5
  expect: greater than or equal to (int) 10
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_LessThan(t *testing.T) {
@@ -106,16 +106,16 @@ func TestNumber_LessThan(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 10).LessThan(5)
-	assert.ThatString(t, m.String()).Equal(`value not less than expected:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not less than expected:
     got: (int) 10
  expect: less than (int) 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 10).LessThan(5, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value not less than expected:
+	assert.ThatNumber(m, 10).LessThan(5, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not less than expected:
     got: (int) 10
  expect: less than (int) 5
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_LessOrEqual(t *testing.T) {
@@ -125,16 +125,16 @@ func TestNumber_LessOrEqual(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 10).LessOrEqual(5)
-	assert.ThatString(t, m.String()).Equal(`value not less than or equal to expected:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not less than or equal to expected:
     got: (int) 10
  expect: less than or equal to (int) 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 10).LessOrEqual(5, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value not less than or equal to expected:
+	assert.ThatNumber(m, 10).LessOrEqual(5, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not less than or equal to expected:
     got: (int) 10
  expect: less than or equal to (int) 5
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsZero(t *testing.T) {
@@ -144,16 +144,16 @@ func TestNumber_IsZero(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).IsZero()
-	assert.ThatString(t, m.String()).Equal(`value is not zero:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not zero:
     got: (int) 5
  expect: zero`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).IsZero("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is not zero:
+	assert.ThatNumber(m, 5).IsZero("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not zero:
     got: (int) 5
  expect: zero
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsNotZero(t *testing.T) {
@@ -163,16 +163,16 @@ func TestNumber_IsNotZero(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 0).IsNotZero()
-	assert.ThatString(t, m.String()).Equal(`value is zero:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is zero:
     got: (int) 0
  expect: non-zero`)
 
 	m.Reset()
-	assert.ThatNumber(m, 0).IsNotZero("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is zero:
+	assert.ThatNumber(m, 0).IsNotZero("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is zero:
     got: (int) 0
  expect: non-zero
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsPositive(t *testing.T) {
@@ -182,16 +182,16 @@ func TestNumber_IsPositive(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, -5).IsPositive()
-	assert.ThatString(t, m.String()).Equal(`value is not positive:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not positive:
     got: (int) -5
  expect: positive`)
 
 	m.Reset()
-	assert.ThatNumber(m, -5).IsPositive("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is not positive:
+	assert.ThatNumber(m, -5).IsPositive("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not positive:
     got: (int) -5
  expect: positive
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsNegative(t *testing.T) {
@@ -201,16 +201,16 @@ func TestNumber_IsNegative(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).IsNegative()
-	assert.ThatString(t, m.String()).Equal(`value is not negative:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not negative:
     got: (int) 5
  expect: negative`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).IsNegative("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is not negative:
+	assert.ThatNumber(m, 5).IsNegative("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not negative:
     got: (int) 5
  expect: negative
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsNonNegative(t *testing.T) {
@@ -220,16 +220,16 @@ func TestNumber_IsNonNegative(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, -5).IsNonNegative()
-	assert.ThatString(t, m.String()).Equal(`value is negative:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is negative:
     got: (int) -5
  expect: non-negative`)
 
 	m.Reset()
-	assert.ThatNumber(m, -5).IsNonNegative("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is negative:
+	assert.ThatNumber(m, -5).IsNonNegative("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is negative:
     got: (int) -5
  expect: non-negative
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsNonPositive(t *testing.T) {
@@ -239,16 +239,16 @@ func TestNumber_IsNonPositive(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).IsNonPositive()
-	assert.ThatString(t, m.String()).Equal(`value is positive:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is positive:
     got: (int) 5
  expect: non-positive`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).IsNonPositive("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is positive:
+	assert.ThatNumber(m, 5).IsNonPositive("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is positive:
     got: (int) 5
  expect: non-positive
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsBetween(t *testing.T) {
@@ -258,16 +258,16 @@ func TestNumber_IsBetween(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 0).IsBetween(1, 10)
-	assert.ThatString(t, m.String()).Equal(`value not within range:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not within range:
     got: (int) 0
  expect: between (int) 1 and (int) 10`)
 
 	m.Reset()
-	assert.ThatNumber(m, 0).IsBetween(1, 10, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value not within range:
+	assert.ThatNumber(m, 0).IsBetween(1, 10, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not within range:
     got: (int) 0
  expect: between (int) 1 and (int) 10
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsNotBetween(t *testing.T) {
@@ -277,16 +277,16 @@ func TestNumber_IsNotBetween(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5).IsNotBetween(1, 10)
-	assert.ThatString(t, m.String()).Equal(`value is within range:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is within range:
     got: (int) 5
  expect: not between (int) 1 and (int) 10`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).IsNotBetween(1, 10, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is within range:
+	assert.ThatNumber(m, 5).IsNotBetween(1, 10, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is within range:
     got: (int) 5
  expect: not between (int) 1 and (int) 10
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsInDelta(t *testing.T) {
@@ -296,16 +296,16 @@ func TestNumber_IsInDelta(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5.6).IsInDelta(5.0, 0.3)
-	assert.ThatString(t, m.String()).Equal(`value not within delta:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not within delta:
     got: (float64) 5.6
  expect: within ±(float64) 0.3 of (float64) 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5.6).IsInDelta(5.0, 0.3, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value not within delta:
+	assert.ThatNumber(m, 5.6).IsInDelta(5.0, 0.3, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value not within delta:
     got: (float64) 5.6
  expect: within ±(float64) 0.3 of (float64) 5
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsNaN(t *testing.T) {
@@ -315,16 +315,16 @@ func TestNumber_IsNaN(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5.0).IsNaN()
-	assert.ThatString(t, m.String()).Equal(`value is not NaN:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not NaN:
     got: (float64) 5
  expect: NaN`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5.0).IsNaN("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is not NaN:
+	assert.ThatNumber(m, 5.0).IsNaN("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not NaN:
     got: (float64) 5
  expect: NaN
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsInf(t *testing.T) {
@@ -338,16 +338,16 @@ func TestNumber_IsInf(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, 5.0).IsInf(1)
-	assert.ThatString(t, m.String()).Equal(`value is not infinite:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not infinite:
     got: (float64) 5
  expect: infinite with sign 1`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5.0).IsInf(1, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is not infinite:
+	assert.ThatNumber(m, 5.0).IsInf(1, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not infinite:
     got: (float64) 5
  expect: infinite with sign 1
-message: param (index=0)`)
+message: index is 0`)
 }
 
 func TestNumber_IsFinite(t *testing.T) {
@@ -357,14 +357,14 @@ func TestNumber_IsFinite(t *testing.T) {
 
 	m.Reset()
 	assert.ThatNumber(m, math.Inf(1)).IsFinite()
-	assert.ThatString(t, m.String()).Equal(`value is not finite:
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not finite:
     got: (float64) +Inf
  expect: finite`)
 
 	m.Reset()
-	assert.ThatNumber(m, math.Inf(-1)).IsFinite("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`value is not finite:
+	assert.ThatNumber(m, math.Inf(-1)).IsFinite("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: value is not finite:
     got: (float64) -Inf
  expect: finite
-message: param (index=0)`)
+message: index is 0`)
 }

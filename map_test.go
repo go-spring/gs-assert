@@ -30,16 +30,14 @@ func TestMap_Length(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).Length(0)
-	assert.ThatString(t, m.String()).Equal(`length mismatch:
-    got: length 1 (map[string]int) map[a:1]
- expect: length 0`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to have length 0, but it has length 1
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Length(0, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`length mismatch:
-    got: length 1 (map[string]int) map[a:1]
- expect: length 0
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).Length(0, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to have length 0, but it has length 1
+    got: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_Equal(t *testing.T) {
@@ -51,16 +49,16 @@ func TestMap_Equal(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).Equal(map[string]int{"b": 2})
-	assert.ThatString(t, m.String()).Equal(`map content mismatch:
-    got: key a value (int) 1
- expect: key a value (int) 0`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to be equal, but key 'a' is missing
+    got: {"a":1}
+ expect: {"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Equal(map[string]int{"b": 2}, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map content mismatch:
-    got: key a value (int) 1
- expect: key a value (int) 0
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).Equal(map[string]int{"b": 2}, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to be equal, but key 'a' is missing
+    got: {"a":1}
+ expect: {"b":2}
+message: index is 0`)
 }
 
 func TestMap_NotEqual(t *testing.T) {
@@ -71,16 +69,14 @@ func TestMap_NotEqual(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).NotEqual(testMap)
-	assert.ThatString(t, m.String()).Equal(`maps are equal:
-    got: (map[string]int) map[a:1]
- expect: not equal to map[a:1]`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to be different, but they are equal
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).NotEqual(testMap, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`maps are equal:
-    got: (map[string]int) map[a:1]
- expect: not equal to map[a:1]
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).NotEqual(testMap, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to be different, but they are equal
+    got: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_IsEmpty(t *testing.T) {
@@ -91,16 +87,14 @@ func TestMap_IsEmpty(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, map[string]int{"a": 1}).IsEmpty()
-	assert.ThatString(t, m.String()).Equal(`map is not empty:
-    got: (map[string]int) map[a:1]
- expect: empty map`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be empty, but it is not
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{"a": 1}).IsEmpty("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map is not empty:
-    got: (map[string]int) map[a:1]
- expect: empty map
-message: param (index=0)`)
+	assert.ThatMap(m, map[string]int{"a": 1}).IsEmpty("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be empty, but it is not
+    got: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_IsNotEmpty(t *testing.T) {
@@ -112,56 +106,50 @@ func TestMap_IsNotEmpty(t *testing.T) {
 	m.Reset()
 	var emptyMap map[string]int
 	assert.ThatMap(m, emptyMap).IsNotEmpty()
-	assert.ThatString(t, m.String()).Equal(`map is empty:
-    got: (map[string]int) map[]
- expect: non-empty map`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be non-empty, but it is empty
+    got: null`)
 
 	m.Reset()
-	assert.ThatMap(m, emptyMap).IsNotEmpty("param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map is empty:
-    got: (map[string]int) map[]
- expect: non-empty map
-message: param (index=0)`)
+	assert.ThatMap(m, emptyMap).IsNotEmpty("index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be non-empty, but it is empty
+    got: null
+message: index is 0`)
 }
 
-func TestMap_Contains(t *testing.T) {
+func TestMap_ContainsKey(t *testing.T) {
 	m := new(MockTestingT)
 	testMap := map[string]int{"a": 1}
-	assert.ThatMap(m, testMap).Contains("a")
+	assert.ThatMap(m, testMap).ContainsKey("a")
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Contains("b")
-	assert.ThatString(t, m.String()).Equal(`map does not contain the key:
-    got: (map[string]int) map[a:1]
- expect: map containing key b`)
+	assert.ThatMap(m, testMap).ContainsKey("b")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain key 'b', but it is missing
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Contains("b", "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map does not contain the key:
-    got: (map[string]int) map[a:1]
- expect: map containing key b
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).ContainsKey("b", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain key 'b', but it is missing
+    got: {"a":1}
+message: index is 0`)
 }
 
-func TestMap_NotContains(t *testing.T) {
+func TestMap_NotContainsKey(t *testing.T) {
 	m := new(MockTestingT)
 	testMap := map[string]int{"a": 1}
-	assert.ThatMap(m, testMap).NotContains("b")
+	assert.ThatMap(m, testMap).NotContainsKey("b")
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.ThatMap(m, testMap).NotContains("a")
-	assert.ThatString(t, m.String()).Equal(`map contains the key:
-    got: (map[string]int) map[a:1]
- expect: map not containing key a`)
+	assert.ThatMap(m, testMap).NotContainsKey("a")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain key 'a', but it is found
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).NotContains("a", "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map contains the key:
-    got: (map[string]int) map[a:1]
- expect: map not containing key a
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).NotContainsKey("a", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain key 'a', but it is found
+    got: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_ContainsValue(t *testing.T) {
@@ -172,16 +160,14 @@ func TestMap_ContainsValue(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).ContainsValue(2)
-	assert.ThatString(t, m.String()).Equal(`map does not contain the value:
-    got: (map[string]int) map[a:1]
- expect: map containing value 2`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain value 2, but it is missing
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).ContainsValue(2, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map does not contain the value:
-    got: (map[string]int) map[a:1]
- expect: map containing value 2
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).ContainsValue(2, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain value 2, but it is missing
+    got: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_NotContainsValue(t *testing.T) {
@@ -192,16 +178,14 @@ func TestMap_NotContainsValue(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).NotContainsValue(1)
-	assert.ThatString(t, m.String()).Equal(`map contains the value:
-    got: (map[string]int) map[a:1]
- expect: map not containing value 1`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain value 1, but it is found
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).NotContainsValue(1, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map contains the value:
-    got: (map[string]int) map[a:1]
- expect: map not containing value 1
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).NotContainsValue(1, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain value 1, but it is found
+    got: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_HasKeyValue(t *testing.T) {
@@ -212,16 +196,14 @@ func TestMap_HasKeyValue(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).HasKeyValue("a", 2)
-	assert.ThatString(t, m.String()).Equal(`key-value pair mismatch:
-    got: key a value (int) 1
- expect: key a value (int) 2`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected value a for key '2', but got 1 instead
+    got: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).HasKeyValue("a", 2, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`key-value pair mismatch:
-    got: key a value (int) 1
- expect: key a value (int) 2
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).HasKeyValue("a", 2, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected value a for key '2', but got 1 instead
+    got: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_ContainsKeys(t *testing.T) {
@@ -232,16 +214,14 @@ func TestMap_ContainsKeys(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).ContainsKeys([]string{"c"})
-	assert.ThatString(t, m.String()).Equal(`map does not contain all keys:
-    got: (map[string]int) map[a:1 b:2]
- expect: map containing key c`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain key 'c', but it is missing
+    got: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).ContainsKeys([]string{"c"}, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map does not contain all keys:
-    got: (map[string]int) map[a:1 b:2]
- expect: map containing key c
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).ContainsKeys([]string{"c"}, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain key 'c', but it is missing
+    got: {"a":1,"b":2}
+message: index is 0`)
 }
 
 func TestMap_NotContainsKeys(t *testing.T) {
@@ -252,16 +232,14 @@ func TestMap_NotContainsKeys(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).NotContainsKeys([]string{"a"})
-	assert.ThatString(t, m.String()).Equal(`map contains unexpected key:
-    got: (map[string]int) map[a:1 b:2]
- expect: map not containing key a`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain key 'a', but it is found
+    got: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).NotContainsKeys([]string{"a"}, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map contains unexpected key:
-    got: (map[string]int) map[a:1 b:2]
- expect: map not containing key a
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).NotContainsKeys([]string{"a"}, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain key 'a', but it is found
+    got: {"a":1,"b":2}
+message: index is 0`)
 }
 
 func TestMap_ContainsValues(t *testing.T) {
@@ -272,16 +250,14 @@ func TestMap_ContainsValues(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).ContainsValues([]int{3})
-	assert.ThatString(t, m.String()).Equal(`map does not contain all values:
-    got: (map[string]int) map[a:1 b:2]
- expect: map containing value 3`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain value 3, but it is missing
+    got: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).ContainsValues([]int{3}, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map does not contain all values:
-    got: (map[string]int) map[a:1 b:2]
- expect: map containing value 3
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).ContainsValues([]int{3}, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to contain value 3, but it is missing
+    got: {"a":1,"b":2}
+message: index is 0`)
 }
 
 func TestMap_NotContainsValues(t *testing.T) {
@@ -292,16 +268,14 @@ func TestMap_NotContainsValues(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, testMap).NotContainsValues([]int{1})
-	assert.ThatString(t, m.String()).Equal(`map contains unexpected value:
-    got: (map[string]int) map[a:1 b:2]
- expect: map not containing value 1`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain value 1, but it is found
+    got: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).NotContainsValues([]int{1}, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map contains unexpected value:
-    got: (map[string]int) map[a:1 b:2]
- expect: map not containing value 1
-message: param (index=0)`)
+	assert.ThatMap(m, testMap).NotContainsValues([]int{1}, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map not to contain value 1, but it is found
+    got: {"a":1,"b":2}
+message: index is 0`)
 }
 
 func TestMap_IsSubsetOf(t *testing.T) {
@@ -313,16 +287,16 @@ func TestMap_IsSubsetOf(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, superMap).IsSubsetOf(testMap)
-	assert.ThatString(t, m.String()).Equal(`map is not a subset:
-    got: key b value (int) 2
- expect: key b value (int) 0`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be a subset, but unexpected key 'b' is found
+    got: {"a":1,"b":2}
+ expect: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, superMap).IsSubsetOf(testMap, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map is not a subset:
-    got: key b value (int) 2
- expect: key b value (int) 0
-message: param (index=0)`)
+	assert.ThatMap(m, superMap).IsSubsetOf(testMap, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be a subset, but unexpected key 'b' is found
+    got: {"a":1,"b":2}
+ expect: {"a":1}
+message: index is 0`)
 }
 
 func TestMap_IsSupersetOf(t *testing.T) {
@@ -334,16 +308,16 @@ func TestMap_IsSupersetOf(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, subMap).IsSupersetOf(testMap)
-	assert.ThatString(t, m.String()).Equal(`map is not a superset:
-    got: key b value (int) 0
- expect: key b value (int) 2`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be a superset, but key 'b' is missing
+    got: {"a":1}
+ expect: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, subMap).IsSupersetOf(testMap, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map is not a superset:
-    got: key b value (int) 0
- expect: key b value (int) 2
-message: param (index=0)`)
+	assert.ThatMap(m, subMap).IsSupersetOf(testMap, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected map to be a superset, but key 'b' is missing
+    got: {"a":1}
+ expect: {"a":1,"b":2}
+message: index is 0`)
 }
 
 func TestMap_HasSameKeys(t *testing.T) {
@@ -355,16 +329,16 @@ func TestMap_HasSameKeys(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, map1).HasSameKeys(map[string]int{"c": 3})
-	assert.ThatString(t, m.String()).Equal(`map key count mismatch:
-    got: count 2 (map[string]int) map[a:1 b:2]
- expect: count 1`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to have the same keys, but their lengths differ
+    got: {"a":1,"b":2}
+ expect: {"c":3}`)
 
 	m.Reset()
-	assert.ThatMap(m, map1).HasSameKeys(map[string]int{"c": 3}, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map key count mismatch:
-    got: count 2 (map[string]int) map[a:1 b:2]
- expect: count 1
-message: param (index=0)`)
+	assert.ThatMap(m, map1).HasSameKeys(map[string]int{"c": 3}, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to have the same keys, but their lengths differ
+    got: {"a":1,"b":2}
+ expect: {"c":3}
+message: index is 0`)
 }
 
 func TestMap_HasSameValues(t *testing.T) {
@@ -376,14 +350,14 @@ func TestMap_HasSameValues(t *testing.T) {
 
 	m.Reset()
 	assert.ThatMap(m, map1).HasSameValues(map[string]int{"c": 3})
-	assert.ThatString(t, m.String()).Equal(`map value count mismatch:
-    got: count 2 (map[string]int) map[a:1 b:2]
- expect: count 1`)
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to have the same values, but their lengths differ
+    got: {"a":1,"b":2}
+ expect: {"c":3}`)
 
 	m.Reset()
-	assert.ThatMap(m, map1).HasSameValues(map[string]int{"c": 3}, "param (index=0)")
-	assert.ThatString(t, m.String()).Equal(`map value count mismatch:
-    got: count 2 (map[string]int) map[a:1 b:2]
- expect: count 1
-message: param (index=0)`)
+	assert.ThatMap(m, map1).HasSameValues(map[string]int{"c": 3}, "index is 0")
+	assert.ThatString(t, m.String()).Equal(`Assertion failed: expected maps to have the same values, but their lengths differ
+    got: {"a":1,"b":2}
+ expect: {"c":3}
+message: index is 0`)
 }
