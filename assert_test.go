@@ -25,142 +25,126 @@ import (
 	"testing"
 
 	"github.com/go-spring/assert"
+	"github.com/go-spring/assert/internal"
 )
 
-type MockTestingT struct {
-	buf bytes.Buffer
-}
-
-func (m *MockTestingT) Reset() {
-	m.buf.Reset()
-}
-
-func (m *MockTestingT) Helper() {}
-
-func (m *MockTestingT) Error(args ...any) {
-	for _, arg := range args {
-		m.buf.WriteString(fmt.Sprint(arg))
-	}
-}
-
-func (m *MockTestingT) String() string {
-	return m.buf.String()
-}
-
 func TestTrue(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, true).IsTrue()
+	m := new(internal.MockTestingT)
+	assert.That(m, true).True()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, false).IsTrue()
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got false but expect true")
+	assert.That(m, false).True()
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expected value to be true, but it is false")
 
 	m.Reset()
-	assert.That(m, false).IsTrue("index is 0")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got false but expect true\nmessage: index is 0")
+	assert.That(m, false).Must().True("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be true, but it is false
+message: "index is 0"`)
 }
 
 func TestFalse(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, false).IsFalse()
+	m := new(internal.MockTestingT)
+	assert.That(m, false).False()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, true).IsFalse()
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got true but expect false")
+	assert.That(m, true).False()
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expected value to be false, but it is true")
 
 	m.Reset()
-	assert.That(m, true).IsFalse("index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got true but expect false
-message: index is 0`)
+	assert.That(m, true).Must().False("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be false, but it is true
+message: "index is 0"`)
 }
 
 func TestNil(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, nil).IsNil()
+	m := new(internal.MockTestingT)
+	assert.That(m, nil).Nil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
 	var a []string
-	assert.That(m, a).IsNil()
+	assert.That(m, a).Nil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
 	var s map[string]string
-	assert.That(m, s).IsNil()
+	assert.That(m, s).Nil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, 3).IsNil()
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (int) 3 but expect nil")
+	assert.That(m, 3).Nil()
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected value to be nil, but it is not
+    got: 3`)
 
 	m.Reset()
-	assert.That(m, 3).IsNil("index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got (int) 3 but expect nil
-message: index is 0`)
+	assert.That(m, 3).Must().Nil("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be nil, but it is not
+    got: 3
+message: "index is 0"`)
 }
 
 func TestNotNil(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, 3).IsNotNil()
+	m := new(internal.MockTestingT)
+	assert.That(m, 3).NotNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, make([]string, 0)).IsNotNil()
+	assert.That(m, make([]string, 0)).NotNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, make(map[string]string)).IsNotNil()
+	assert.That(m, make(map[string]string)).NotNil()
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, nil).IsNotNil()
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got nil but expect not nil")
+	assert.That(m, nil).NotNil()
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected value to be non-nil, but it is nil`)
 
 	m.Reset()
-	assert.That(m, nil).IsNotNil("index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got nil but expect not nil
-message: index is 0`)
+	assert.That(m, nil).Must().NotNil("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be non-nil, but it is nil
+message: "index is 0"`)
 }
 
 func TestPanic(t *testing.T) {
-	m := new(MockTestingT)
+	m := new(internal.MockTestingT)
 	assert.Panic(m, func() { panic("this is an error") }, "an error")
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
 	assert.Panic(m, func() {}, "an error")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: did not panic")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: did not panic")
 
 	m.Reset()
 	assert.Panic(m, func() { panic("this is an error") }, `an error \`)
-	assert.ThatString(t, m.String()).Equal("Assertion failed: invalid pattern")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: invalid pattern")
 
 	m.Reset()
 	assert.Panic(m, func() { panic("there's no error") }, "an error")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got "there's no error" which does not match "an error"`)
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: got "there's no error" which does not match "an error"`)
 
 	m.Reset()
 	assert.Panic(m, func() { panic("there's no error") }, "an error", "index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got "there's no error" which does not match "an error"
-message: index is 0`)
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: got "there's no error" which does not match "an error"
+message: "index is 0"`)
 
 	m.Reset()
 	assert.Panic(m, func() { panic(errors.New("there's no error")) }, "an error")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got "there's no error" which does not match "an error"`)
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: got "there's no error" which does not match "an error"`)
 
 	m.Reset()
 	assert.Panic(m, func() { panic(bytes.NewBufferString("there's no error")) }, "an error")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got "there's no error" which does not match "an error"`)
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: got "there's no error" which does not match "an error"`)
 
 	m.Reset()
 	assert.Panic(m, func() { panic([]string{"there's no error"}) }, "an error")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got "[there's no error]" which does not match "an error"`)
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: got "[there's no error]" which does not match "an error"`)
 }
 
 func TestThat_Equal(t *testing.T) {
-	m := new(MockTestingT)
+	m := new(internal.MockTestingT)
 	assert.That(m, 0).Equal(0)
 	assert.ThatString(t, m.String()).Equal("")
 
@@ -182,7 +166,9 @@ func TestThat_Equal(t *testing.T) {
 	}{Text: "a"}).Equal(struct {
 		Text string `json:"text"`
 	}{Text: "a"})
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got (struct { Text string }) {a} but expect (struct { Text string "json:\"text\"" }) {a}`)
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be equal, but they are different
+    got: {"Text":"a"}
+ expect: {"text":"a"}`)
 
 	m.Reset()
 	assert.That(m, struct {
@@ -190,85 +176,110 @@ func TestThat_Equal(t *testing.T) {
 	}{text: "a"}).Equal(struct {
 		msg string
 	}{msg: "a"})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (struct { text string }) {a} but expect (struct { msg string }) {a}")
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be equal, but they are different
+    got: {}
+ expect: {}`)
 
 	m.Reset()
-	assert.That(m, 0).Equal("0")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (int) 0 but expect (string) 0")
+	assert.That(m, 0).Must().Equal("0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be equal, but they are different
+    got: 0
+ expect: "0"`)
 
 	m.Reset()
-	assert.That(m, 0).Equal("0", "index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got (int) 0 but expect (string) 0
-message: index is 0`)
+	assert.That(m, 0).Must().Equal("0", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be equal, but they are different
+    got: 0
+ expect: "0"
+message: "index is 0"`)
 }
 
 func TestThat_NotEqual(t *testing.T) {
-	m := new(MockTestingT)
+	m := new(internal.MockTestingT)
 	assert.That(m, "0").NotEqual(0)
-
-	m.Reset()
-	assert.That(m, []string{"a"}).NotEqual([]string{"a"})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got ([]string) [a] but expect not ([]string) [a]")
+	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
 	assert.That(m, "0").NotEqual("0")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (string) 0 but expect not (string) 0")
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be different, but they are equal
+    got: "0"`)
 
 	m.Reset()
-	assert.That(m, "0").NotEqual("0", "index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got (string) 0 but expect not (string) 0
-message: index is 0`)
+	assert.That(m, "0").Must().NotEqual("0", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be different, but they are equal
+    got: "0"
+message: "index is 0"`)
 }
 
 func TestThat_Same(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, "0").IsSame("0")
+	m := new(internal.MockTestingT)
+	assert.That(m, "0").Same("0")
+	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, 0).IsSame("0")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (int) 0 but expect (string) 0")
+	assert.That(m, 0).Same("0")
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be same, but they are different
+    got: 0
+ expect: "0"`)
 
 	m.Reset()
-	assert.That(m, 0).IsSame("0", "index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: got (int) 0 but expect (string) 0
-message: index is 0`)
+	assert.That(m, 0).Must().Same("0", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be same, but they are different
+    got: 0
+ expect: "0"
+message: "index is 0"`)
 }
 
 func TestThat_NotSame(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, "0").IsNotSame(0)
+	m := new(internal.MockTestingT)
+	assert.That(m, "0").NotSame(0)
+	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, "0").IsNotSame("0")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: expect not (string) 0")
+	assert.That(m, "0").NotSame("0")
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be different, but they are same
+    got: "0"`)
 
 	m.Reset()
-	assert.That(m, "0").IsNotSame("0", "index is 0")
-	assert.ThatString(t, m.String()).Equal(`Assertion failed: expect not (string) 0
-message: index is 0`)
+	assert.That(m, "0").Must().NotSame("0", "index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be different, but they are same
+    got: "0"
+message: "index is 0"`)
 }
 
 func TestThat_TypeOf(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, new(int)).IsTypeOf((*int)(nil))
+	m := new(internal.MockTestingT)
+	assert.That(m, new(int)).TypeOf((*int)(nil))
+	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, "string").IsTypeOf((*fmt.Stringer)(nil))
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got type (string) but expect type (fmt.Stringer)")
+	assert.That(m, "string").TypeOf((*fmt.Stringer)(nil))
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected type to be assignable to target, but it is not
+    got: string
+ expect: fmt.Stringer`)
+
+	m.Reset()
+	assert.That(m, "string").Must().TypeOf((*fmt.Stringer)(nil))
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected type to be assignable to target, but it is not
+    got: string
+ expect: fmt.Stringer`)
 }
 
 func TestThat_Implements(t *testing.T) {
-	m := new(MockTestingT)
+	m := new(internal.MockTestingT)
+
 	assert.That(m, errors.New("error")).Implements((*error)(nil))
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
 	assert.That(m, new(int)).Implements((*int)(nil))
-	assert.ThatString(t, m.String()).Equal("Assertion failed: expect should be interface")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expect should be interface")
 
 	m.Reset()
-	assert.That(m, new(int)).Implements((*io.Reader)(nil))
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got type (*int) but expect type (io.Reader)")
+	assert.That(m, new(int)).Must().Implements((*io.Reader)(nil))
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected type to implement target interface, but it does not
+    got: *int
+ expect: io.Reader`)
 }
 
 type Node struct{}
@@ -294,98 +305,38 @@ func (t *Tree) Contains(key string) bool {
 }
 
 func TestThat_Has(t *testing.T) {
-	m := new(MockTestingT)
+	m := new(internal.MockTestingT)
+	assert.That(m, &Tree{Keys: []string{"1"}}).Has("1")
+	assert.ThatString(t, m.String()).Equal("")
+
+	m.Reset()
 	assert.That(m, 1).Has("1")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: method 'Has' not found on type int")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Has' not found on type int")
 
 	m.Reset()
 	assert.That(m, &Node{}).Has("2")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: method 'Has' must return only a bool")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Has' on type *assert_test.Node should return only a bool")
 
 	m.Reset()
-	assert.That(m, &Tree{}).Has("2")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (*assert_test.Tree) &{[]} not has (string) 2")
-
-	m.Reset()
-	assert.That(m, &Tree{Keys: []string{"1"}}).Has("1")
+	assert.That(m, &Tree{}).Must().Has("2")
+	assert.ThatString(t, m.String()).Equal("fatal# Assertion failed: method 'Has' on type *assert_test.Tree should return true when using param \"2\", but it does not")
 }
 
 func TestThat_Contains(t *testing.T) {
-	m := new(MockTestingT)
+	m := new(internal.MockTestingT)
+
+	assert.That(m, &Tree{Keys: []string{"1"}}).Contains("1")
+	assert.ThatString(t, m.String()).Equal("")
+
+	m.Reset()
 	assert.That(m, 1).Contains("1")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: method 'Contains' not found on type int")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Contains' not found on type int")
 
 	m.Reset()
 	assert.That(m, &Node{}).Contains("2")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: method 'Contains' must return only a bool")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Contains' on type *assert_test.Node should return only a bool")
 
 	m.Reset()
-	assert.That(m, &Tree{}).Contains("2")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (*assert_test.Tree) &{[]} not contains (string) 2")
-
-	m.Reset()
-	assert.That(m, &Tree{Keys: []string{"1"}}).Contains("1")
-}
-
-func TestThat_InSlice(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, 1).InSlice("1")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: unsupported expect value (string) 1")
-
-	m.Reset()
-	assert.That(m, 1).InSlice([]string{"1"})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (int) 1 is not in ([]string) [1]")
-
-	m.Reset()
-	assert.That(m, int64(1)).InSlice([]int64{3, 2})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (int64) 1 is not in ([]int64) [3 2]")
-
-	m.Reset()
-	assert.That(m, int64(1)).InSlice([]int64{3, 2, 1})
-	assert.That(m, "1").InSlice([]string{"3", "2", "1"})
-}
-
-func TestThat_NotInSlice(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, 1).NotInSlice("1")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: unsupported expect value (string) 1")
-
-	m.Reset()
-	assert.That(m, 1).NotInSlice([]string{"1"})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got type (int) doesn't match expect type ([]string)")
-
-	m.Reset()
-	assert.That(m, "1").NotInSlice([]string{"3", "2", "1"})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (string) 1 is in ([]string) [3 2 1]")
-
-	m.Reset()
-	assert.That(m, int64(1)).NotInSlice([]int64{3, 2})
-}
-
-func TestThat_InMapKeys(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, 1).InMapKeys("1")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: unsupported expect value (string) 1")
-
-	m.Reset()
-	assert.That(m, 1).InMapKeys(map[string]string{"1": "1"})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (int) 1 is not in keys of (map[string]string) map[1:1]")
-
-	m.Reset()
-	assert.That(m, int64(1)).InMapKeys(map[int64]int64{3: 1, 2: 2, 1: 3})
-	assert.That(m, "1").InMapKeys(map[string]string{"3": "1", "2": "2", "1": "3"})
-}
-
-func TestThat_InMapValues(t *testing.T) {
-	m := new(MockTestingT)
-	assert.That(m, 1).InMapValues("1")
-	assert.ThatString(t, m.String()).Equal("Assertion failed: unsupported expect value (string) 1")
-
-	m.Reset()
-	assert.That(m, 1).InMapValues(map[string]string{"1": "1"})
-	assert.ThatString(t, m.String()).Equal("Assertion failed: got (int) 1 is not in values of (map[string]string) map[1:1]")
-
-	m.Reset()
-	assert.That(m, int64(1)).InMapValues(map[int64]int64{3: 1, 2: 2, 1: 3})
-	assert.That(m, "1").InMapValues(map[string]string{"3": "1", "2": "2", "1": "3"})
+	assert.That(m, &Tree{}).Must().Contains("2")
+	assert.ThatString(t, m.String()).Equal("fatal# Assertion failed: method 'Contains' on type *assert_test.Tree should return true when using param \"2\", but it does not")
 }

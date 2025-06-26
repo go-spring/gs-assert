@@ -19,37 +19,44 @@ package assert
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
+
+	"github.com/go-spring/assert/internal"
 )
 
 // ErrorAssertion provides assertion methods for values of type error.
 // It is used to perform validations on error values in test cases.
 type ErrorAssertion struct {
-	t TestingT
+	AssertionBase[*ErrorAssertion]
+	t internal.TestingT
 	v error
 }
 
 // ThatError returns a new ErrorAssertion for the given error value.
-func ThatError(t TestingT, v error) *ErrorAssertion {
+func ThatError(t internal.TestingT, v error) *ErrorAssertion {
 	return &ErrorAssertion{
 		t: t,
 		v: v,
 	}
 }
 
-// IsNil reports a test failure if the error is not nil.
-func (a *ErrorAssertion) IsNil(msg ...string) {
+// Nil reports a test failure if the error is not nil.
+func (a *ErrorAssertion) Nil(msg ...string) {
 	a.t.Helper()
 	if a.v != nil {
-		fail(a.t, "expect nil error, got: "+a.v.Error(), msg...)
+		str := fmt.Sprintf(`expected error to be nil, but it is not
+    got: %v`, a.v)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
-// IsNotNil reports a test failure if the error is nil.
-func (a *ErrorAssertion) IsNotNil(msg ...string) {
+// NotNil reports a test failure if the error is nil.
+func (a *ErrorAssertion) NotNil(msg ...string) {
 	a.t.Helper()
 	if a.v == nil {
-		fail(a.t, "expect not nil error", msg...)
+		str := fmt.Sprintf(`expected error to be non-nil, but it is nil`)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -57,7 +64,10 @@ func (a *ErrorAssertion) IsNotNil(msg ...string) {
 func (a *ErrorAssertion) Is(target error, msg ...string) {
 	a.t.Helper()
 	if !errors.Is(target, a.v) {
-		fail(a.t, "expect error: "+target.Error()+", got: "+a.v.Error(), msg...)
+		str := fmt.Sprintf(`expected error to be equal to target, but they are different 
+    got: %v
+ expect: %v`, a.v, target)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -65,15 +75,10 @@ func (a *ErrorAssertion) Is(target error, msg ...string) {
 func (a *ErrorAssertion) NotIs(target error, msg ...string) {
 	a.t.Helper()
 	if errors.Is(target, a.v) {
-		fail(a.t, "expect error not to be: "+target.Error(), msg...)
-	}
-}
-
-// As checks if the error can be converted to the target type.
-func (a *ErrorAssertion) As(target interface{}, msg ...string) {
-	a.t.Helper()
-	if !errors.As(a.v, &target) {
-		fail(a.t, "expect error to be of type: "+fmt.Sprintf("%T", target), msg...)
+		str := fmt.Sprintf(`expected error not to be equal to target, but they are equal 
+    got: %v
+ expect: %v`, a.v, target)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -81,11 +86,14 @@ func (a *ErrorAssertion) As(target interface{}, msg ...string) {
 func (a *ErrorAssertion) ContainsMessage(substring string, msg ...string) {
 	a.t.Helper()
 	if a.v == nil {
-		fail(a.t, "expect not nil error", msg...)
+		str := fmt.Sprintf(`expected error to be non-nil, but it is nil`)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
 	if !strings.Contains(a.v.Error(), substring) {
-		fail(a.t, "expect error message to contain: "+substring+", got: "+a.v.Error(), msg...)
+		str := fmt.Sprintf(`expected error message to contain %q, but it does not
+    got: %q`, substring, a.v.Error())
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -95,8 +103,15 @@ func (a *ErrorAssertion) ContainsMessage(substring string, msg ...string) {
 func (a *ErrorAssertion) Matches(expr string, msg ...string) {
 	a.t.Helper()
 	if a.v == nil {
-		fail(a.t, "expect not nil error", msg...)
+		str := fmt.Sprintf(`expected non-nil error, but got nil`)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
-	matches(a.t, a.v.Error(), expr, msg...)
+	s := a.v.Error()
+	if ok, err := regexp.MatchString(expr, s); err != nil {
+		internal.Fail(a.t, a.fatalOnFailure, "invalid pattern", msg...)
+	} else if !ok {
+		str := fmt.Sprintf("got %q which does not match %q", s, expr)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
 }

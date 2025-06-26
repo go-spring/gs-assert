@@ -18,25 +18,20 @@ package assert
 
 import (
 	"fmt"
+
+	"github.com/go-spring/assert/internal"
 )
 
 // MapAssertion encapsulates a map value and a test handler for making assertions on the map.
-type MapAssertion[K comparable, V comparable] struct {
-	c AssertionConfig
-	t TestingT
+type MapAssertion[K, V comparable] struct {
+	AssertionBase[*MapAssertion[K, V]]
+	t internal.TestingT
 	v map[K]V
 }
 
 // ThatMap returns a MapAssertion for the given testing object and map value.
-func ThatMap[K comparable, V comparable](t TestingT, v map[K]V, options ...AssertionOption) *MapAssertion[K, V] {
-	c := AssertionConfig{
-		outputValueAsJSON: true,
-	}
-	for _, opt := range options {
-		opt(&c)
-	}
+func ThatMap[K, V comparable](t internal.TestingT, v map[K]V) *MapAssertion[K, V] {
 	return &MapAssertion[K, V]{
-		c: c,
 		t: t,
 		v: v,
 	}
@@ -46,9 +41,9 @@ func ThatMap[K comparable, V comparable](t TestingT, v map[K]V, options ...Asser
 func (a *MapAssertion[K, V]) Length(length int, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != length {
-		str := fmt.Sprintf(`expected map to have length %v, but it has length %d
-    got: %v`, length, len(a.v), a.c.OutputValue(a.v))
-		fail(a.t, str, msg...)
+		str := fmt.Sprintf(`expected map to have length %d, but it has length %d
+    got: %v`, length, len(a.v), a.outputValue(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -58,22 +53,22 @@ func (a *MapAssertion[K, V]) Equal(expect map[K]V, msg ...string) {
 	if len(a.v) != len(expect) {
 		str := fmt.Sprintf(`expected maps to be equal, but their lengths are different
     got: %v
- expect: %v`, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-		fail(a.t, str, msg...)
+ expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
 	for k, v := range a.v {
 		if expectV, ok := expect[k]; !ok {
 			str := fmt.Sprintf(`expected maps to be equal, but key '%v' is missing
     got: %v
- expect: %v`, k, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		} else if v != expectV {
 			str := fmt.Sprintf(`expected maps to be equal, but values for key '%v' are different
     got: %v
- expect: %v`, k, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
@@ -92,29 +87,29 @@ func (a *MapAssertion[K, V]) NotEqual(expect map[K]V, msg ...string) {
 		}
 		if equal {
 			str := fmt.Sprintf(`expected maps to be different, but they are equal
-    got: %v`, a.c.OutputValue(a.v))
-			fail(a.t, str, msg...)
+    got: %v`, a.outputValue(a.v))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		}
 	}
 }
 
-// IsEmpty asserts that the map is empty.
-func (a *MapAssertion[K, V]) IsEmpty(msg ...string) {
+// Empty asserts that the map is empty.
+func (a *MapAssertion[K, V]) Empty(msg ...string) {
 	a.t.Helper()
 	if len(a.v) != 0 {
 		str := fmt.Sprintf(`expected map to be empty, but it is not
-    got: %v`, a.c.OutputValue(a.v))
-		fail(a.t, str, msg...)
+    got: %v`, a.outputValue(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
-// IsNotEmpty asserts that the map is not empty.
-func (a *MapAssertion[K, V]) IsNotEmpty(msg ...string) {
+// NotEmpty asserts that the map is not empty.
+func (a *MapAssertion[K, V]) NotEmpty(msg ...string) {
 	a.t.Helper()
 	if len(a.v) == 0 {
 		str := fmt.Sprintf(`expected map to be non-empty, but it is empty
-    got: %v`, a.c.OutputValue(a.v))
-		fail(a.t, str, msg...)
+    got: %v`, a.outputValue(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -123,8 +118,8 @@ func (a *MapAssertion[K, V]) ContainsKey(key K, msg ...string) {
 	a.t.Helper()
 	if _, ok := a.v[key]; !ok {
 		str := fmt.Sprintf(`expected map to contain key '%v', but it is missing
-    got: %v`, key, a.c.OutputValue(a.v))
-		fail(a.t, str, msg...)
+    got: %v`, key, a.outputValue(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -133,8 +128,8 @@ func (a *MapAssertion[K, V]) NotContainsKey(key K, msg ...string) {
 	a.t.Helper()
 	if _, ok := a.v[key]; ok {
 		str := fmt.Sprintf(`expected map not to contain key '%v', but it is found
-    got: %v`, key, a.c.OutputValue(a.v))
-		fail(a.t, str, msg...)
+    got: %v`, key, a.outputValue(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -147,8 +142,8 @@ func (a *MapAssertion[K, V]) ContainsValue(value V, msg ...string) {
 		}
 	}
 	str := fmt.Sprintf(`expected map to contain value %#v, but it is missing
-    got: %v`, value, a.c.OutputValue(a.v))
-	fail(a.t, str, msg...)
+    got: %v`, value, a.outputValue(a.v))
+	internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 }
 
 // NotContainsValue asserts that the map does not contain the expected value.
@@ -157,57 +152,57 @@ func (a *MapAssertion[K, V]) NotContainsValue(value V, msg ...string) {
 	for _, v := range a.v {
 		if v == value {
 			str := fmt.Sprintf(`expected map not to contain value %#v, but it is found
-    got: %v`, value, a.c.OutputValue(a.v))
-			fail(a.t, str, msg...)
+    got: %v`, value, a.outputValue(a.v))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
 }
 
-// HasKeyValue asserts that the map contains the expected key-value pair.
-func (a *MapAssertion[K, V]) HasKeyValue(key K, value V, msg ...string) {
+// ContainsKeyValue asserts that the map contains the expected key-value pair.
+func (a *MapAssertion[K, V]) ContainsKeyValue(key K, value V, msg ...string) {
 	a.t.Helper()
 	if v, ok := a.v[key]; !ok {
 		str := fmt.Sprintf(`expected map to contain key '%v', but it is missing
-    got: %v`, key, a.c.OutputValue(a.v))
-		fail(a.t, str, msg...)
+    got: %v`, key, a.outputValue(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	} else if v != value {
-		str := fmt.Sprintf(`expected value %v for key '%v', but got %v instead
-    got: %v`, key, value, v, a.c.OutputValue(a.v))
-		fail(a.t, str, msg...)
+		str := fmt.Sprintf(`expected value %#v for key '%v', but got %#v instead
+    got: %v`, value, key, v, a.outputValue(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
 // ContainsKeys asserts that the map contains all the expected keys.
-func (a *MapAssertion[K, V]) ContainsKeys(expect []K, msg ...string) {
+func (a *MapAssertion[K, V]) ContainsKeys(keys []K, msg ...string) {
 	a.t.Helper()
-	for _, key := range expect {
+	for _, key := range keys {
 		if _, ok := a.v[key]; !ok {
 			str := fmt.Sprintf(`expected map to contain key '%v', but it is missing
-    got: %v`, key, a.c.OutputValue(a.v))
-			fail(a.t, str, msg...)
+    got: %v`, key, a.outputValue(a.v))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
 }
 
 // NotContainsKeys asserts that the map does not contain any of the expected keys.
-func (a *MapAssertion[K, V]) NotContainsKeys(expect []K, msg ...string) {
+func (a *MapAssertion[K, V]) NotContainsKeys(keys []K, msg ...string) {
 	a.t.Helper()
-	for _, key := range expect {
+	for _, key := range keys {
 		if _, ok := a.v[key]; ok {
 			str := fmt.Sprintf(`expected map not to contain key '%v', but it is found
-    got: %v`, key, a.c.OutputValue(a.v))
-			fail(a.t, str, msg...)
+    got: %v`, key, a.outputValue(a.v))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
 }
 
 // ContainsValues asserts that the map contains all the expected values.
-func (a *MapAssertion[K, V]) ContainsValues(expect []V, msg ...string) {
+func (a *MapAssertion[K, V]) ContainsValues(values []V, msg ...string) {
 	a.t.Helper()
-	for _, value := range expect {
+	for _, value := range values {
 		found := false
 		for _, v := range a.v {
 			if v == value {
@@ -217,22 +212,22 @@ func (a *MapAssertion[K, V]) ContainsValues(expect []V, msg ...string) {
 		}
 		if !found {
 			str := fmt.Sprintf(`expected map to contain value %#v, but it is missing
-    got: %v`, value, a.c.OutputValue(a.v))
-			fail(a.t, str, msg...)
+    got: %v`, value, a.outputValue(a.v))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
 }
 
 // NotContainsValues asserts that the map does not contain any of the expected values.
-func (a *MapAssertion[K, V]) NotContainsValues(expect []V, msg ...string) {
+func (a *MapAssertion[K, V]) NotContainsValues(values []V, msg ...string) {
 	a.t.Helper()
-	for _, value := range expect {
+	for _, value := range values {
 		for _, v := range a.v {
 			if v == value {
 				str := fmt.Sprintf(`expected map not to contain value %#v, but it is found
-    got: %v`, v, a.c.OutputValue(a.v))
-				fail(a.t, str, msg...)
+    got: %v`, v, a.outputValue(a.v))
+				internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 				return
 			}
 		}
@@ -246,14 +241,14 @@ func (a *MapAssertion[K, V]) IsSubsetOf(expect map[K]V, msg ...string) {
 		if expectV, ok := expect[k]; !ok {
 			str := fmt.Sprintf(`expected map to be a subset, but unexpected key '%v' is found
     got: %v
- expect: %v`, k, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		} else if v != expectV {
 			str := fmt.Sprintf(`expected map to be a subset, but values for key '%v' are different 
     got: %v
- expect: %v`, k, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
@@ -266,14 +261,14 @@ func (a *MapAssertion[K, V]) IsSupersetOf(expect map[K]V, msg ...string) {
 		if aV, ok := a.v[k]; !ok {
 			str := fmt.Sprintf(`expected map to be a superset, but key '%v' is missing
     got: %v
- expect: %v`, k, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		} else if aV != v {
 			str := fmt.Sprintf(`expected map to be a superset, but values for key '%v' are different
     got: %v
- expect: %v`, k, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
@@ -283,18 +278,18 @@ func (a *MapAssertion[K, V]) IsSupersetOf(expect map[K]V, msg ...string) {
 func (a *MapAssertion[K, V]) HasSameKeys(expect map[K]V, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != len(expect) {
-		str := fmt.Sprintf(`expected maps to have the same keys, but their lengths differ
+		str := fmt.Sprintf(`expected maps to have the same keys, but their lengths are different
     got: %v
- expect: %v`, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-		fail(a.t, str, msg...)
+ expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
 	for k := range a.v {
 		if _, ok := expect[k]; !ok {
 			str := fmt.Sprintf(`expected maps to have the same keys, but key '%v' is missing
     got: %v
- expect: %v`, k, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
@@ -304,10 +299,10 @@ func (a *MapAssertion[K, V]) HasSameKeys(expect map[K]V, msg ...string) {
 func (a *MapAssertion[K, V]) HasSameValues(expect map[K]V, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != len(expect) {
-		str := fmt.Sprintf(`expected maps to have the same values, but their lengths differ
+		str := fmt.Sprintf(`expected maps to have the same values, but their lengths are different
     got: %v
- expect: %v`, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-		fail(a.t, str, msg...)
+ expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
 	valueCount := make(map[V]int)
@@ -319,10 +314,10 @@ func (a *MapAssertion[K, V]) HasSameValues(expect map[K]V, msg ...string) {
 	}
 	for _, count := range valueCount {
 		if count != 0 {
-			str := fmt.Sprintf(`expected maps to have the same values, but values are different
+			str := fmt.Sprintf(`expected maps to have the same values, but their values are different
     got: %v
- expect: %v`, a.c.OutputValue(a.v), a.c.OutputValue(expect))
-			fail(a.t, str, msg...)
+ expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
