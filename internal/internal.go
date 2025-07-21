@@ -66,11 +66,11 @@ func (m *MockTestingT) String() string {
 }
 
 // Fail reports an assertion failure using the provided TestingT.
-// If fatalOnFailure is true, it calls Fatal; otherwise, it calls Error.
+// If fatalOnFailure is true, it calls `t.Fatal`; otherwise, it calls `t.Error`.
 func Fail(t TestingT, fatalOnFailure bool, str string, msg ...string) {
 	t.Helper()
 	if len(msg) > 0 {
-		str += fmt.Sprintf("\nmessage: %q", strings.Join(msg, ", "))
+		str += fmt.Sprintf("\n message: %q", strings.Join(msg, ", "))
 	}
 	if fatalOnFailure {
 		t.Fatal("Assertion failed: " + str)

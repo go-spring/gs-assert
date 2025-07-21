@@ -34,16 +34,8 @@ func Panic(t internal.TestingT, fn func(), expr string, msg ...string) {
 	internal.Panic(t, false, fn, expr, msg...)
 }
 
-type OutputValueKind int
-
-const (
-	outputValueAsJSON = OutputValueKind(iota)
-	outputValueAsStd
-)
-
 type AssertionBase[T any] struct {
-	outputValueAsJSON OutputValueKind
-	fatalOnFailure    bool
+	fatalOnFailure bool
 }
 
 // Must 不要调用此方法，仅为 require 包提供的.
@@ -52,27 +44,13 @@ func (c *AssertionBase[T]) Must() T {
 	return *(*T)(unsafe.Pointer(&c))
 }
 
-func (c *AssertionBase[T]) OutputValueAsStd() T {
-	c.outputValueAsJSON = outputValueAsStd
-	return *(*T)(unsafe.Pointer(&c))
-}
-
-func (c *AssertionBase[T]) OutputValueAsJSON() T {
-	c.outputValueAsJSON = outputValueAsJSON
-	return *(*T)(unsafe.Pointer(&c))
-}
-
-// outputValue returns the value as a string.
-func (c *AssertionBase[T]) outputValue(v interface{}) string {
-	if c.outputValueAsJSON == outputValueAsJSON {
-		b, err := json.Marshal(v)
-		if err != nil {
-			return err.Error()
-		}
-		return string(b)
-	} else {
-		return fmt.Sprintf("%v", v)
+// toJsonString converts the given value to a JSON string.
+func (c *AssertionBase[T]) toJsonString(v interface{}) string {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err.Error()
 	}
+	return string(b)
 }
 
 // Assertion wraps a test context and a value for fluent assertions.
@@ -132,7 +110,7 @@ func (a *Assertion) Nil(msg ...string) {
 	// then a==b is false, because they are different types.
 	if !isNil(reflect.ValueOf(a.v)) {
 		str := fmt.Sprintf(`expected value to be nil, but it is not
-    got: %v`, a.v)
+  actual: %v`, a.v)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -152,8 +130,8 @@ func (a *Assertion) Equal(expect interface{}, msg ...string) {
 	a.t.Helper()
 	if !reflect.DeepEqual(a.v, expect) {
 		str := fmt.Sprintf(`expected values to be equal, but they are different
-    got: %v
- expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, a.toJsonString(a.v), a.toJsonString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -164,7 +142,7 @@ func (a *Assertion) NotEqual(expect interface{}, msg ...string) {
 	a.t.Helper()
 	if reflect.DeepEqual(a.v, expect) {
 		str := fmt.Sprintf(`expected values to be different, but they are equal
-    got: %v`, a.outputValue(a.v))
+  actual: %v`, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -175,8 +153,8 @@ func (a *Assertion) Same(expect interface{}, msg ...string) {
 	a.t.Helper()
 	if a.v != expect {
 		str := fmt.Sprintf(`expected values to be same, but they are different
-    got: %v
- expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, a.toJsonString(a.v), a.toJsonString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -187,7 +165,7 @@ func (a *Assertion) NotSame(expect interface{}, msg ...string) {
 	a.t.Helper()
 	if a.v == expect {
 		str := fmt.Sprintf(`expected values to be different, but they are same
-    got: %v`, a.outputValue(a.v))
+  actual: %v`, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -206,8 +184,8 @@ func (a *Assertion) TypeOf(expect interface{}, msg ...string) {
 
 	if !e1.AssignableTo(e2) {
 		str := fmt.Sprintf(`expected type to be assignable to target, but it is not
-    got: %s
- expect: %s`, e1.String(), e2.String())
+  actual: %s
+expected: %s`, e1.String(), e2.String())
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -231,8 +209,8 @@ func (a *Assertion) Implements(expect interface{}, msg ...string) {
 
 	if !e1.Implements(e2) {
 		str := fmt.Sprintf(`expected type to implement target interface, but it does not
-    got: %s
- expect: %s`, e1.String(), e2.String())
+  actual: %s
+expected: %s`, e1.String(), e2.String())
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }

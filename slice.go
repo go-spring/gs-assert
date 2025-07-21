@@ -37,12 +37,23 @@ func ThatSlice[T comparable](t internal.TestingT, v []T) *SliceAssertion[T] {
 	}
 }
 
+// Length asserts that the slice has the expected length.
+func (a *SliceAssertion[T]) Length(length int, msg ...string) *SliceAssertion[T] {
+	a.t.Helper()
+	if len(a.v) != length {
+		str := fmt.Sprintf(`expected slice to have length %d, but it has length %d
+  actual: %v`, length, len(a.v), a.toJsonString(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
+	return a
+}
+
 // Nil asserts that the slice is nil.
 func (a *SliceAssertion[T]) Nil(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if a.v != nil {
 		str := fmt.Sprintf(`expected slice to be nil, but it is not
-    got: %v`, a.outputValue(a.v))
+  actual: %v`, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -53,40 +64,7 @@ func (a *SliceAssertion[T]) NotNil(msg ...string) *SliceAssertion[T] {
 	a.t.Helper()
 	if a.v == nil {
 		str := fmt.Sprintf(`expected slice not to be nil, but it is
-    got: %v`, a.outputValue(a.v))
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-	}
-	return a
-}
-
-// Empty asserts that the slice is empty.
-func (a *SliceAssertion[T]) Empty(msg ...string) *SliceAssertion[T] {
-	a.t.Helper()
-	if len(a.v) != 0 {
-		str := fmt.Sprintf(`expected slice to be empty, but it is not
-    got: %v`, a.outputValue(a.v))
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-	}
-	return a
-}
-
-// NotEmpty asserts that the slice is not empty.
-func (a *SliceAssertion[T]) NotEmpty(msg ...string) *SliceAssertion[T] {
-	a.t.Helper()
-	if len(a.v) == 0 {
-		str := fmt.Sprintf(`expected slice not to be empty, but it is
-    got: %v`, a.outputValue(a.v))
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-	}
-	return a
-}
-
-// Length asserts that the slice has the expected length.
-func (a *SliceAssertion[T]) Length(length int, msg ...string) *SliceAssertion[T] {
-	a.t.Helper()
-	if len(a.v) != length {
-		str := fmt.Sprintf(`expected slice to have length %d, but it has length %d
-    got: %v`, length, len(a.v), a.outputValue(a.v))
+  actual: %v`, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -97,16 +75,16 @@ func (a *SliceAssertion[T]) Equal(expect []T, msg ...string) *SliceAssertion[T] 
 	a.t.Helper()
 	if len(a.v) != len(expect) {
 		str := fmt.Sprintf(`expected slices to be equal, but their lengths are different
-    got: %v
- expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, a.toJsonString(a.v), a.toJsonString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return a
 	}
 	for i := range a.v {
 		if a.v[i] != expect[i] {
 			str := fmt.Sprintf(`expected slices to be equal, but values at index %d are different
-    got: %v
- expect: %v`, i, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, i, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}
@@ -127,7 +105,7 @@ func (a *SliceAssertion[T]) NotEqual(expect []T, msg ...string) *SliceAssertion[
 		}
 		if equal {
 			str := fmt.Sprintf(`expected slices to be different, but they are equal
-    got: %v`, a.outputValue(a.v))
+  actual: %v`, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		}
 	}
@@ -143,7 +121,7 @@ func (a *SliceAssertion[T]) Contains(element T, msg ...string) *SliceAssertion[T
 		}
 	}
 	str := fmt.Sprintf(`expected slice to contain element %#v, but it is missing
-    got: %v`, element, a.outputValue(a.v))
+  actual: %v`, element, a.toJsonString(a.v))
 	internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	return a
 }
@@ -154,7 +132,7 @@ func (a *SliceAssertion[T]) NotContains(element T, msg ...string) *SliceAssertio
 	for _, v := range a.v {
 		if v == element {
 			str := fmt.Sprintf(`expected slice not to contain element %#v, but it is found
-    got: %v`, element, a.outputValue(a.v))
+  actual: %v`, element, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}
@@ -181,8 +159,8 @@ func (a *SliceAssertion[T]) ContainsSlice(sub []T, msg ...string) *SliceAssertio
 		}
 	}
 	str := fmt.Sprintf(`expected slice to contain sub-slice, but it is not
-    got: %v
-    sub: %v`, a.outputValue(a.v), a.outputValue(sub))
+  actual: %v
+     sub: %v`, a.toJsonString(a.v), a.toJsonString(sub))
 	internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	return a
 }
@@ -203,8 +181,8 @@ func (a *SliceAssertion[T]) NotContainsSlice(sub []T, msg ...string) *SliceAsser
 		}
 		if match {
 			str := fmt.Sprintf(`expected slice not to contain sub-slice, but it is
-    got: %v
-    sub: %v`, a.outputValue(a.v), a.outputValue(sub))
+  actual: %v
+     sub: %v`, a.toJsonString(a.v), a.toJsonString(sub))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}
@@ -217,16 +195,16 @@ func (a *SliceAssertion[T]) HasPrefix(prefix []T, msg ...string) *SliceAssertion
 	a.t.Helper()
 	if len(prefix) > len(a.v) {
 		str := fmt.Sprintf(`expected slice to start with prefix, but it is not
-    got: %v
- prefix: %v`, a.outputValue(a.v), a.outputValue(prefix))
+  actual: %v
+  prefix: %v`, a.toJsonString(a.v), a.toJsonString(prefix))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return a
 	}
 	for i := range prefix {
 		if a.v[i] != prefix[i] {
 			str := fmt.Sprintf(`expected slice to start with prefix, but it is not
-    got: %v
- prefix: %v`, a.outputValue(a.v), a.outputValue(prefix))
+  actual: %v
+  prefix: %v`, a.toJsonString(a.v), a.toJsonString(prefix))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}
@@ -239,8 +217,8 @@ func (a *SliceAssertion[T]) HasSuffix(suffix []T, msg ...string) *SliceAssertion
 	a.t.Helper()
 	if len(suffix) > len(a.v) {
 		str := fmt.Sprintf(`expected slice to end with suffix, but it is not
-    got: %v
- suffix: %v`, a.outputValue(a.v), a.outputValue(suffix))
+  actual: %v
+  suffix: %v`, a.toJsonString(a.v), a.toJsonString(suffix))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return a
 	}
@@ -248,8 +226,8 @@ func (a *SliceAssertion[T]) HasSuffix(suffix []T, msg ...string) *SliceAssertion
 	for i := range suffix {
 		if a.v[offset+i] != suffix[i] {
 			str := fmt.Sprintf(`expected slice to end with suffix, but it is not
-    got: %v
- suffix: %v`, a.outputValue(a.v), a.outputValue(suffix))
+  actual: %v
+  suffix: %v`, a.toJsonString(a.v), a.toJsonString(suffix))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}
@@ -264,7 +242,7 @@ func (a *SliceAssertion[T]) AllUnique(msg ...string) *SliceAssertion[T] {
 	for _, v := range a.v {
 		if seen[v] {
 			str := fmt.Sprintf(`expected all elements in the slice to be unique, but duplicate element %#v is found
-    got: %v`, v, a.outputValue(a.v))
+  actual: %v`, v, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}
@@ -279,7 +257,7 @@ func (a *SliceAssertion[T]) AllMatches(fn func(T) bool, msg ...string) *SliceAss
 	for _, v := range a.v {
 		if !fn(v) {
 			str := fmt.Sprintf(`expected all elements in the slice to satisfy the condition, but element %#v does not
-    got: %v`, v, a.outputValue(a.v))
+  actual: %v`, v, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}
@@ -296,7 +274,7 @@ func (a *SliceAssertion[T]) AnyMatches(fn func(T) bool, msg ...string) *SliceAss
 		}
 	}
 	str := fmt.Sprintf(`expected at least one element in the slice to satisfy the condition, but none do
-    got: %v`, a.outputValue(a.v))
+  actual: %v`, a.toJsonString(a.v))
 	internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	return a
 }
@@ -307,7 +285,7 @@ func (a *SliceAssertion[T]) NoneMatches(fn func(T) bool, msg ...string) *SliceAs
 	for _, v := range a.v {
 		if fn(v) {
 			str := fmt.Sprintf(`expected no element in the slice to satisfy the condition, but element %#v does
-    got: %v`, v, a.outputValue(a.v))
+  actual: %v`, v, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return a
 		}

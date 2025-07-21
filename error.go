@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/go-spring/assert/internal"
 )
@@ -46,7 +45,7 @@ func (a *ErrorAssertion) Nil(msg ...string) {
 	a.t.Helper()
 	if a.v != nil {
 		str := fmt.Sprintf(`expected error to be nil, but it is not
-    got: %v`, a.v)
+  actual: %v`, a.v)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -65,8 +64,8 @@ func (a *ErrorAssertion) Is(target error, msg ...string) {
 	a.t.Helper()
 	if !errors.Is(target, a.v) {
 		str := fmt.Sprintf(`expected error to be equal to target, but they are different 
-    got: %v
- expect: %v`, a.v, target)
+  actual: %v
+expected: %v`, a.v, target)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -76,23 +75,8 @@ func (a *ErrorAssertion) NotIs(target error, msg ...string) {
 	a.t.Helper()
 	if errors.Is(target, a.v) {
 		str := fmt.Sprintf(`expected error not to be equal to target, but they are equal 
-    got: %v
- expect: %v`, a.v, target)
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-	}
-}
-
-// ContainsMessage reports a test failure if the error message does not contain the given substring.
-func (a *ErrorAssertion) ContainsMessage(substring string, msg ...string) {
-	a.t.Helper()
-	if a.v == nil {
-		str := fmt.Sprintf(`expected error to be non-nil, but it is nil`)
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-		return
-	}
-	if !strings.Contains(a.v.Error(), substring) {
-		str := fmt.Sprintf(`expected error message to contain %q, but it does not
-    got: %q`, substring, a.v.Error())
+  actual: %v
+expected: %v`, a.v, target)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }

@@ -95,8 +95,8 @@ func (a *NumberAssertion[T]) LessOrEqual(expect T, msg ...string) {
 	}
 }
 
-// IsZero asserts that the number value is zero.
-func (a *NumberAssertion[T]) IsZero(msg ...string) {
+// Zero asserts that the number value is zero.
+func (a *NumberAssertion[T]) Zero(msg ...string) {
 	a.t.Helper()
 	if a.v != 0 {
 		str := fmt.Sprintf(`expected number to be zero, but got %v`, a.v)
@@ -104,8 +104,8 @@ func (a *NumberAssertion[T]) IsZero(msg ...string) {
 	}
 }
 
-// IsNotZero asserts that the number value is not zero.
-func (a *NumberAssertion[T]) IsNotZero(msg ...string) {
+// NotZero asserts that the number value is not zero.
+func (a *NumberAssertion[T]) NotZero(msg ...string) {
 	a.t.Helper()
 	if a.v == 0 {
 		str := fmt.Sprintf(`expected number not to be zero, but got %v`, a.v)
@@ -113,8 +113,8 @@ func (a *NumberAssertion[T]) IsNotZero(msg ...string) {
 	}
 }
 
-// IsPositive asserts that the number value is positive.
-func (a *NumberAssertion[T]) IsPositive(msg ...string) {
+// Positive asserts that the number value is positive.
+func (a *NumberAssertion[T]) Positive(msg ...string) {
 	a.t.Helper()
 	if a.v <= 0 {
 		str := fmt.Sprintf(`expected number to be positive, but got %v`, a.v)
@@ -122,26 +122,8 @@ func (a *NumberAssertion[T]) IsPositive(msg ...string) {
 	}
 }
 
-// IsNegative asserts that the number value is negative.
-func (a *NumberAssertion[T]) IsNegative(msg ...string) {
-	a.t.Helper()
-	if a.v >= 0 {
-		str := fmt.Sprintf(`expected number to be negative, but got %v`, a.v)
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-	}
-}
-
-// IsNonNegative asserts that the number value is non-negative.
-func (a *NumberAssertion[T]) IsNonNegative(msg ...string) {
-	a.t.Helper()
-	if a.v < 0 {
-		str := fmt.Sprintf(`expected number to be non-negative, but got %v`, a.v)
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-	}
-}
-
-// IsNonPositive asserts that the number value is non-positive.
-func (a *NumberAssertion[T]) IsNonPositive(msg ...string) {
+// NotPositive asserts that the number value is non-positive.
+func (a *NumberAssertion[T]) NotPositive(msg ...string) {
 	a.t.Helper()
 	if a.v > 0 {
 		str := fmt.Sprintf(`expected number to be non-positive, but got %v`, a.v)
@@ -149,8 +131,26 @@ func (a *NumberAssertion[T]) IsNonPositive(msg ...string) {
 	}
 }
 
-// IsBetween asserts that the number value is between the lower and upper bounds.
-func (a *NumberAssertion[T]) IsBetween(lower, upper T, msg ...string) {
+// Negative asserts that the number value is negative.
+func (a *NumberAssertion[T]) Negative(msg ...string) {
+	a.t.Helper()
+	if a.v >= 0 {
+		str := fmt.Sprintf(`expected number to be negative, but got %v`, a.v)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
+}
+
+// NotNegative asserts that the number value is non-negative.
+func (a *NumberAssertion[T]) NotNegative(msg ...string) {
+	a.t.Helper()
+	if a.v < 0 {
+		str := fmt.Sprintf(`expected number to be non-negative, but got %v`, a.v)
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
+}
+
+// Between asserts that the number value is between the lower and upper bounds.
+func (a *NumberAssertion[T]) Between(lower, upper T, msg ...string) {
 	a.t.Helper()
 	if a.v < lower || a.v > upper {
 		str := fmt.Sprintf(`expected number to be between %v and %v, but got %v`, lower, upper, a.v)
@@ -158,8 +158,8 @@ func (a *NumberAssertion[T]) IsBetween(lower, upper T, msg ...string) {
 	}
 }
 
-// IsNotBetween asserts that the number value is not between the lower and upper bounds.
-func (a *NumberAssertion[T]) IsNotBetween(lower, upper T, msg ...string) {
+// NotBetween asserts that the number value is not between the lower and upper bounds.
+func (a *NumberAssertion[T]) NotBetween(lower, upper T, msg ...string) {
 	a.t.Helper()
 	if a.v >= lower && a.v <= upper {
 		str := fmt.Sprintf(`expected number not to be between %v and %v, but got %v`, lower, upper, a.v)
@@ -167,8 +167,8 @@ func (a *NumberAssertion[T]) IsNotBetween(lower, upper T, msg ...string) {
 	}
 }
 
-// IsInDelta asserts that the number value is within the delta range of the expected value.
-func (a *NumberAssertion[T]) IsInDelta(expect T, delta T, msg ...string) {
+// InDelta asserts that the number value is within the delta range of the expected value.
+func (a *NumberAssertion[T]) InDelta(expect T, delta T, msg ...string) {
 	a.t.Helper()
 	diff := a.v - expect
 	if diff < 0 {

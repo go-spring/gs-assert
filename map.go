@@ -42,7 +42,27 @@ func (a *MapAssertion[K, V]) Length(length int, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != length {
 		str := fmt.Sprintf(`expected map to have length %d, but it has length %d
-    got: %v`, length, len(a.v), a.outputValue(a.v))
+  actual: %v`, length, len(a.v), a.toJsonString(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
+}
+
+// Nil asserts that the map is nil.
+func (a *MapAssertion[K, V]) Nil(msg ...string) {
+	a.t.Helper()
+	if a.v != nil {
+		str := fmt.Sprintf(`expected map to be nil, but it is not
+  actual: %v`, a.toJsonString(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
+}
+
+// NotNil asserts that the map is not nil.
+func (a *MapAssertion[K, V]) NotNil(msg ...string) {
+	a.t.Helper()
+	if a.v == nil {
+		str := fmt.Sprintf(`expected map not to be nil, but it is
+  actual: %v`, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -52,22 +72,22 @@ func (a *MapAssertion[K, V]) Equal(expect map[K]V, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != len(expect) {
 		str := fmt.Sprintf(`expected maps to be equal, but their lengths are different
-    got: %v
- expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, a.toJsonString(a.v), a.toJsonString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
 	for k, v := range a.v {
 		if expectV, ok := expect[k]; !ok {
 			str := fmt.Sprintf(`expected maps to be equal, but key '%v' is missing
-    got: %v
- expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, k, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		} else if v != expectV {
 			str := fmt.Sprintf(`expected maps to be equal, but values for key '%v' are different
-    got: %v
- expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, k, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
@@ -87,29 +107,9 @@ func (a *MapAssertion[K, V]) NotEqual(expect map[K]V, msg ...string) {
 		}
 		if equal {
 			str := fmt.Sprintf(`expected maps to be different, but they are equal
-    got: %v`, a.outputValue(a.v))
+  actual: %v`, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		}
-	}
-}
-
-// Empty asserts that the map is empty.
-func (a *MapAssertion[K, V]) Empty(msg ...string) {
-	a.t.Helper()
-	if len(a.v) != 0 {
-		str := fmt.Sprintf(`expected map to be empty, but it is not
-    got: %v`, a.outputValue(a.v))
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-	}
-}
-
-// NotEmpty asserts that the map is not empty.
-func (a *MapAssertion[K, V]) NotEmpty(msg ...string) {
-	a.t.Helper()
-	if len(a.v) == 0 {
-		str := fmt.Sprintf(`expected map to be non-empty, but it is empty
-    got: %v`, a.outputValue(a.v))
-		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
 
@@ -118,7 +118,7 @@ func (a *MapAssertion[K, V]) ContainsKey(key K, msg ...string) {
 	a.t.Helper()
 	if _, ok := a.v[key]; !ok {
 		str := fmt.Sprintf(`expected map to contain key '%v', but it is missing
-    got: %v`, key, a.outputValue(a.v))
+  actual: %v`, key, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -128,7 +128,7 @@ func (a *MapAssertion[K, V]) NotContainsKey(key K, msg ...string) {
 	a.t.Helper()
 	if _, ok := a.v[key]; ok {
 		str := fmt.Sprintf(`expected map not to contain key '%v', but it is found
-    got: %v`, key, a.outputValue(a.v))
+  actual: %v`, key, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -142,7 +142,7 @@ func (a *MapAssertion[K, V]) ContainsValue(value V, msg ...string) {
 		}
 	}
 	str := fmt.Sprintf(`expected map to contain value %#v, but it is missing
-    got: %v`, value, a.outputValue(a.v))
+  actual: %v`, value, a.toJsonString(a.v))
 	internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 }
 
@@ -152,7 +152,7 @@ func (a *MapAssertion[K, V]) NotContainsValue(value V, msg ...string) {
 	for _, v := range a.v {
 		if v == value {
 			str := fmt.Sprintf(`expected map not to contain value %#v, but it is found
-    got: %v`, value, a.outputValue(a.v))
+  actual: %v`, value, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
@@ -164,11 +164,11 @@ func (a *MapAssertion[K, V]) ContainsKeyValue(key K, value V, msg ...string) {
 	a.t.Helper()
 	if v, ok := a.v[key]; !ok {
 		str := fmt.Sprintf(`expected map to contain key '%v', but it is missing
-    got: %v`, key, a.outputValue(a.v))
+  actual: %v`, key, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	} else if v != value {
 		str := fmt.Sprintf(`expected value %#v for key '%v', but got %#v instead
-    got: %v`, value, key, v, a.outputValue(a.v))
+  actual: %v`, value, key, v, a.toJsonString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 }
@@ -179,7 +179,7 @@ func (a *MapAssertion[K, V]) ContainsKeys(keys []K, msg ...string) {
 	for _, key := range keys {
 		if _, ok := a.v[key]; !ok {
 			str := fmt.Sprintf(`expected map to contain key '%v', but it is missing
-    got: %v`, key, a.outputValue(a.v))
+  actual: %v`, key, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
@@ -192,7 +192,7 @@ func (a *MapAssertion[K, V]) NotContainsKeys(keys []K, msg ...string) {
 	for _, key := range keys {
 		if _, ok := a.v[key]; ok {
 			str := fmt.Sprintf(`expected map not to contain key '%v', but it is found
-    got: %v`, key, a.outputValue(a.v))
+  actual: %v`, key, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
@@ -212,7 +212,7 @@ func (a *MapAssertion[K, V]) ContainsValues(values []V, msg ...string) {
 		}
 		if !found {
 			str := fmt.Sprintf(`expected map to contain value %#v, but it is missing
-    got: %v`, value, a.outputValue(a.v))
+  actual: %v`, value, a.toJsonString(a.v))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
@@ -226,7 +226,7 @@ func (a *MapAssertion[K, V]) NotContainsValues(values []V, msg ...string) {
 		for _, v := range a.v {
 			if v == value {
 				str := fmt.Sprintf(`expected map not to contain value %#v, but it is found
-    got: %v`, v, a.outputValue(a.v))
+  actual: %v`, v, a.toJsonString(a.v))
 				internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 				return
 			}
@@ -234,40 +234,40 @@ func (a *MapAssertion[K, V]) NotContainsValues(values []V, msg ...string) {
 	}
 }
 
-// IsSubsetOf asserts that the map is a subset of the expected map.
-func (a *MapAssertion[K, V]) IsSubsetOf(expect map[K]V, msg ...string) {
+// SubsetOf asserts that the map is a subset of the expected map.
+func (a *MapAssertion[K, V]) SubsetOf(expect map[K]V, msg ...string) {
 	a.t.Helper()
 	for k, v := range a.v {
 		if expectV, ok := expect[k]; !ok {
 			str := fmt.Sprintf(`expected map to be a subset, but unexpected key '%v' is found
-    got: %v
- expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, k, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		} else if v != expectV {
-			str := fmt.Sprintf(`expected map to be a subset, but values for key '%v' are different 
-    got: %v
- expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+			str := fmt.Sprintf(`expected map to be a subset, but values for key '%v' are different
+  actual: %v
+expected: %v`, k, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
 	}
 }
 
-// IsSupersetOf asserts that the map is a superset of the expected map.
-func (a *MapAssertion[K, V]) IsSupersetOf(expect map[K]V, msg ...string) {
+// SupersetOf asserts that the map is a superset of the expected map.
+func (a *MapAssertion[K, V]) SupersetOf(expect map[K]V, msg ...string) {
 	a.t.Helper()
 	for k, v := range expect {
 		if aV, ok := a.v[k]; !ok {
 			str := fmt.Sprintf(`expected map to be a superset, but key '%v' is missing
-    got: %v
- expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, k, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		} else if aV != v {
 			str := fmt.Sprintf(`expected map to be a superset, but values for key '%v' are different
-    got: %v
- expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, k, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
@@ -279,16 +279,16 @@ func (a *MapAssertion[K, V]) HasSameKeys(expect map[K]V, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != len(expect) {
 		str := fmt.Sprintf(`expected maps to have the same keys, but their lengths are different
-    got: %v
- expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, a.toJsonString(a.v), a.toJsonString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
 	for k := range a.v {
 		if _, ok := expect[k]; !ok {
 			str := fmt.Sprintf(`expected maps to have the same keys, but key '%v' is missing
-    got: %v
- expect: %v`, k, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, k, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
@@ -300,8 +300,8 @@ func (a *MapAssertion[K, V]) HasSameValues(expect map[K]V, msg ...string) {
 	a.t.Helper()
 	if len(a.v) != len(expect) {
 		str := fmt.Sprintf(`expected maps to have the same values, but their lengths are different
-    got: %v
- expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, a.toJsonString(a.v), a.toJsonString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return
 	}
@@ -315,8 +315,8 @@ func (a *MapAssertion[K, V]) HasSameValues(expect map[K]V, msg ...string) {
 	for _, count := range valueCount {
 		if count != 0 {
 			str := fmt.Sprintf(`expected maps to have the same values, but their values are different
-    got: %v
- expect: %v`, a.outputValue(a.v), a.outputValue(expect))
+  actual: %v
+expected: %v`, a.toJsonString(a.v), a.toJsonString(expect))
 			internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 			return
 		}
