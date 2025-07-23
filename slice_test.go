@@ -80,6 +80,44 @@ func TestSlice_NotNil(t *testing.T) {
  message: "index is 0"`)
 }
 
+func TestSlice_Empty(t *testing.T) {
+	m := new(internal.MockTestingT)
+
+	m.Reset()
+	assert.ThatSlice(m, []int{}).Empty()
+	assert.ThatString(t, m.String()).Equal("")
+
+	m.Reset()
+	assert.ThatSlice(m, []int{1, 2}).Empty()
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected slice to be empty, but it is not
+  actual: [1,2]`)
+
+	m.Reset()
+	assert.ThatSlice(m, []int{1, 2}).Must().Empty("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to be empty, but it is not
+  actual: [1,2]
+ message: "index is 0"`)
+}
+
+func TestSlice_NotEmpty(t *testing.T) {
+	m := new(internal.MockTestingT)
+
+	m.Reset()
+	assert.ThatSlice(m, []string{"hello"}).NotEmpty()
+	assert.ThatString(t, m.String()).Equal("")
+
+	m.Reset()
+	assert.ThatSlice(m, []string{}).NotEmpty()
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected slice not to be empty, but it is
+  actual: []`)
+
+	m.Reset()
+	assert.ThatSlice(m, []string(nil)).Must().NotEmpty("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice not to be empty, but it is
+  actual: null
+ message: "index is 0"`)
+}
+
 func TestSlice_Equal(t *testing.T) {
 	m := new(internal.MockTestingT)
 

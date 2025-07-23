@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// Package require provides assertion helpers that stop test execution on failure.
+// For assertions that should allow the test to continue on failure, use the `assert` package.
 package require
 
 import (

@@ -70,6 +70,28 @@ func (a *SliceAssertion[T]) NotNil(msg ...string) *SliceAssertion[T] {
 	return a
 }
 
+// Empty asserts that the slice is empty.
+func (a *SliceAssertion[T]) Empty(msg ...string) *SliceAssertion[T] {
+	a.t.Helper()
+	if len(a.v) != 0 {
+		str := fmt.Sprintf(`expected slice to be empty, but it is not
+  actual: %v`, a.toJsonString(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
+	return a
+}
+
+// NotEmpty asserts that the slice is not empty.
+func (a *SliceAssertion[T]) NotEmpty(msg ...string) *SliceAssertion[T] {
+	a.t.Helper()
+	if len(a.v) == 0 {
+		str := fmt.Sprintf(`expected slice not to be empty, but it is
+  actual: %v`, a.toJsonString(a.v))
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+	}
+	return a
+}
+
 // Equal asserts that the slice is equal to the expected slice.
 func (a *SliceAssertion[T]) Equal(expect []T, msg ...string) *SliceAssertion[T] {
 	a.t.Helper()

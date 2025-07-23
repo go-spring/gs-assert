@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Go-Spring Authors.
+ * Copyright 2025 The Go-Spring Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,23 +116,23 @@ expected: %q`, a.v, expect)
 // If either string is invalid JSON, the test will fail with the unmarshal error.
 func (a *StringAssertion) JSONEqual(expect string, msg ...string) *StringAssertion {
 	a.t.Helper()
-	var gotJson interface{}
-	if err := json.Unmarshal([]byte(a.v), &gotJson); err != nil {
+	var actualJSON interface{}
+	if err := json.Unmarshal([]byte(a.v), &actualJSON); err != nil {
 		str := fmt.Sprintf(`expected strings to be JSON-equal, but failed to unmarshal actual value
   actual: %q
    error: %q`, a.v, err.Error())
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return a
 	}
-	var expectJson interface{}
-	if err := json.Unmarshal([]byte(expect), &expectJson); err != nil {
+	var expectedJSON interface{}
+	if err := json.Unmarshal([]byte(expect), &expectedJSON); err != nil {
 		str := fmt.Sprintf(`expected strings to be JSON-equal, but failed to unmarshal expected value
 expected: %q
    error: %q`, expect, err.Error())
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return a
 	}
-	if !reflect.DeepEqual(gotJson, expectJson) {
+	if !reflect.DeepEqual(actualJSON, expectedJSON) {
 		str := fmt.Sprintf(`expected strings to be JSON-equal, but they are not
   actual: %q
 expected: %q`, a.v, expect)
@@ -280,7 +280,7 @@ func (a *StringAssertion) IsURL(msg ...string) *StringAssertion {
 	return a
 }
 
-// IsIPv4 reports a test failure if the actual string is not a valid IP address.
+// IsIPv4 reports a test failure if the actual string is not a valid IPv4 address.
 func (a *StringAssertion) IsIPv4(msg ...string) *StringAssertion {
 	a.t.Helper()
 	ipRegex := `^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$`

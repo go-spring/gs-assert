@@ -34,12 +34,12 @@ func TestError_Nil(t *testing.T) {
 	m.Reset()
 	assert.ThatError(m, errors.New("this is an error")).Nil()
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected error to be nil, but it is not
-  actual: this is an error`)
+  actual: (*errors.errorString) "this is an error"`)
 
 	m.Reset()
 	assert.ThatError(m, errors.New("this is an error")).Must().Nil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error to be nil, but it is not
-  actual: this is an error
+  actual: (*errors.errorString) "this is an error"
  message: "index is 0"`)
 }
 
@@ -70,13 +70,13 @@ func TestError_Is(t *testing.T) {
 
 	m.Reset()
 	assert.ThatError(m, err).Is(errors.New("another error"))
-	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected error to be equal to target, but they are different 
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected error to be target (according to errors.Is), but they are different 
   actual: this is an error
 expected: another error`)
 
 	m.Reset()
 	assert.ThatError(m, err).Must().Is(errors.New("another error"), "index is 0")
-	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error to be equal to target, but they are different 
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error to be target (according to errors.Is), but they are different 
   actual: this is an error
 expected: another error
  message: "index is 0"`)
@@ -92,13 +92,13 @@ func TestError_NotIs(t *testing.T) {
 
 	m.Reset()
 	assert.ThatError(m, err).NotIs(err)
-	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected error not to be equal to target, but they are equal 
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected error not to be target (according to errors.Is), but they are equal 
   actual: this is an error
 expected: this is an error`)
 
 	m.Reset()
 	assert.ThatError(m, err).Must().NotIs(err, "index is 0")
-	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error not to be equal to target, but they are equal 
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error not to be target (according to errors.Is), but they are equal 
   actual: this is an error
 expected: this is an error
  message: "index is 0"`)

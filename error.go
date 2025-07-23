@@ -41,55 +41,59 @@ func ThatError(t internal.TestingT, v error) *ErrorAssertion {
 }
 
 // Nil reports a test failure if the error is not nil.
-func (a *ErrorAssertion) Nil(msg ...string) {
+func (a *ErrorAssertion) Nil(msg ...string) *ErrorAssertion {
 	a.t.Helper()
 	if a.v != nil {
 		str := fmt.Sprintf(`expected error to be nil, but it is not
-  actual: %v`, a.v)
+  actual: (%T) %q`, a.v, a.v.Error())
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
+	return a
 }
 
 // NotNil reports a test failure if the error is nil.
-func (a *ErrorAssertion) NotNil(msg ...string) {
+func (a *ErrorAssertion) NotNil(msg ...string) *ErrorAssertion {
 	a.t.Helper()
 	if a.v == nil {
 		str := fmt.Sprintf(`expected error to be non-nil, but it is nil`)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
+	return a
 }
 
 // Is reports a test failure if the error is not the same as the given error.
-func (a *ErrorAssertion) Is(target error, msg ...string) {
+func (a *ErrorAssertion) Is(target error, msg ...string) *ErrorAssertion {
 	a.t.Helper()
 	if !errors.Is(target, a.v) {
-		str := fmt.Sprintf(`expected error to be equal to target, but they are different 
+		str := fmt.Sprintf(`expected error to be target (according to errors.Is), but they are different 
   actual: %v
 expected: %v`, a.v, target)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
+	return a
 }
 
 // NotIs reports a test failure if the error is the same as the given error.
-func (a *ErrorAssertion) NotIs(target error, msg ...string) {
+func (a *ErrorAssertion) NotIs(target error, msg ...string) *ErrorAssertion {
 	a.t.Helper()
 	if errors.Is(target, a.v) {
-		str := fmt.Sprintf(`expected error not to be equal to target, but they are equal 
+		str := fmt.Sprintf(`expected error not to be target (according to errors.Is), but they are equal 
   actual: %v
 expected: %v`, a.v, target)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
+	return a
 }
 
 // Matches reports a test failure if the error string does not match the given expression.
 // It expects a non-nil error and uses the provided expression (typically a regex)
 // to validate the error message content. Optional custom failure messages can be provided.
-func (a *ErrorAssertion) Matches(expr string, msg ...string) {
+func (a *ErrorAssertion) Matches(expr string, msg ...string) *ErrorAssertion {
 	a.t.Helper()
 	if a.v == nil {
 		str := fmt.Sprintf(`expected non-nil error, but got nil`)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
-		return
+		return a
 	}
 	s := a.v.Error()
 	if ok, err := regexp.MatchString(expr, s); err != nil {
@@ -98,4 +102,5 @@ func (a *ErrorAssertion) Matches(expr string, msg ...string) {
 		str := fmt.Sprintf("got %q which does not match %q", s, expr)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
+	return a
 }

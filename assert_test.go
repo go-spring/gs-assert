@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Go-Spring Authors.
+ * Copyright 2025 The Go-Spring Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,12 +119,12 @@ func TestThat_Nil(t *testing.T) {
 	m.Reset()
 	assert.That(m, 3).Nil()
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected value to be nil, but it is not
-  actual: 3`)
+  actual: (int) 3`)
 
 	m.Reset()
 	assert.That(m, 3).Must().Nil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be nil, but it is not
-  actual: 3
+  actual: (int) 3
  message: "index is 0"`)
 }
 
@@ -164,45 +164,45 @@ func TestThat_Equal(t *testing.T) {
 	assert.That(m, []string{"a"}).Equal([]string{"a"})
 	assert.ThatString(t, m.String()).Equal("")
 
+	type SimpleText struct {
+		text string
+	}
+
+	type AnotherSimpleText struct {
+		text string
+	}
+
+	type SimpleMessage struct {
+		message string
+	}
+
 	m.Reset()
-	assert.That(m, struct {
-		text string
-	}{text: "a"}).Equal(struct {
-		text string
-	}{text: "a"})
+	assert.That(m, SimpleText{text: "a"}).Equal(SimpleText{text: "a"})
 	assert.ThatString(t, m.String()).Equal("")
 
 	m.Reset()
-	assert.That(m, struct {
-		Text string
-	}{Text: "a"}).Equal(struct {
-		Text string `json:"text"`
-	}{Text: "a"})
+	assert.That(m, SimpleText{text: "a"}).Equal(AnotherSimpleText{text: "a"})
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be equal, but they are different
-  actual: {"Text":"a"}
-expected: {"text":"a"}`)
+  actual: (assert_test.SimpleText) assert_test.SimpleText{text:"a"}
+expected: (assert_test.AnotherSimpleText) assert_test.AnotherSimpleText{text:"a"}`)
 
 	m.Reset()
-	assert.That(m, struct {
-		text string
-	}{text: "a"}).Equal(struct {
-		msg string
-	}{msg: "a"})
+	assert.That(m, SimpleText{text: "a"}).Equal(SimpleMessage{message: "a"})
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be equal, but they are different
-  actual: {}
-expected: {}`)
+  actual: (assert_test.SimpleText) assert_test.SimpleText{text:"a"}
+expected: (assert_test.SimpleMessage) assert_test.SimpleMessage{message:"a"}`)
 
 	m.Reset()
 	assert.That(m, 0).Must().Equal("0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be equal, but they are different
-  actual: 0
-expected: "0"`)
+  actual: (int) 0
+expected: (string) "0"`)
 
 	m.Reset()
 	assert.That(m, 0).Must().Equal("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be equal, but they are different
-  actual: 0
-expected: "0"
+  actual: (int) 0
+expected: (string) "0"
  message: "index is 0"`)
 }
 
@@ -216,12 +216,12 @@ func TestThat_NotEqual(t *testing.T) {
 	m.Reset()
 	assert.That(m, "0").NotEqual("0")
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be different, but they are equal
-  actual: "0"`)
+  actual: (string) "0"`)
 
 	m.Reset()
 	assert.That(m, "0").Must().NotEqual("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be different, but they are equal
-  actual: "0"
+  actual: (string) "0"
  message: "index is 0"`)
 }
 
@@ -235,14 +235,14 @@ func TestThat_Same(t *testing.T) {
 	m.Reset()
 	assert.That(m, 0).Same("0")
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be same, but they are different
-  actual: 0
-expected: "0"`)
+  actual: (int) 0
+expected: (string) "0"`)
 
 	m.Reset()
 	assert.That(m, 0).Must().Same("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be same, but they are different
-  actual: 0
-expected: "0"
+  actual: (int) 0
+expected: (string) "0"
  message: "index is 0"`)
 }
 
@@ -256,12 +256,12 @@ func TestThat_NotSame(t *testing.T) {
 	m.Reset()
 	assert.That(m, "0").NotSame("0")
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected values to be different, but they are same
-  actual: "0"`)
+  actual: (string) "0"`)
 
 	m.Reset()
 	assert.That(m, "0").Must().NotSame("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be different, but they are same
-  actual: "0"
+  actual: (string) "0"
  message: "index is 0"`)
 }
 
@@ -274,13 +274,13 @@ func TestThat_TypeOf(t *testing.T) {
 
 	m.Reset()
 	assert.That(m, "string").TypeOf((*fmt.Stringer)(nil))
-	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected type to be assignable to target, but it is not
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected type to be assignable to target, but it does not
   actual: string
 expected: fmt.Stringer`)
 
 	m.Reset()
 	assert.That(m, "string").Must().TypeOf((*fmt.Stringer)(nil))
-	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected type to be assignable to target, but it is not
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected type to be assignable to target, but it does not
   actual: string
 expected: fmt.Stringer`)
 }
@@ -294,7 +294,7 @@ func TestThat_Implements(t *testing.T) {
 
 	m.Reset()
 	assert.That(m, new(int)).Implements((*int)(nil))
-	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expect should be interface")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expected target to implement should be interface")
 
 	m.Reset()
 	assert.That(m, new(int)).Must().Implements((*io.Reader)(nil))
@@ -338,7 +338,7 @@ func TestThat_Has(t *testing.T) {
 
 	m.Reset()
 	assert.That(m, &Node{}).Has("2")
-	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Has' on type *assert_test.Node should return only a bool")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Has' on type *assert_test.Node should return only a bool, but it does not")
 
 	m.Reset()
 	assert.That(m, &Tree{}).Must().Has("2")
@@ -358,7 +358,7 @@ func TestThat_Contains(t *testing.T) {
 
 	m.Reset()
 	assert.That(m, &Node{}).Contains("2")
-	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Contains' on type *assert_test.Node should return only a bool")
+	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Contains' on type *assert_test.Node should return only a bool, but it does not")
 
 	m.Reset()
 	assert.That(m, &Tree{}).Must().Contains("2")

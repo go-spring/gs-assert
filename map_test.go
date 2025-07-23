@@ -81,6 +81,43 @@ func TestMap_NotNil(t *testing.T) {
  message: "index is 0"`)
 }
 
+func TestMap_IsEmpty(t *testing.T) {
+	m := new(internal.MockTestingT)
+
+	m.Reset()
+	assert.ThatMap(m, map[string]int(nil)).Empty()
+	assert.ThatString(t, m.String()).Equal("")
+
+	m.Reset()
+	assert.ThatMap(m, map[string]int{"a": 1}).Empty()
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected map to be empty, but it is not
+  actual: {"a":1}`)
+
+	m.Reset()
+	assert.ThatMap(m, map[string]int{"a": 1}).Must().Empty("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to be empty, but it is not
+  actual: {"a":1}
+ message: "index is 0"`)
+}
+
+func TestMap_IsNotEmpty(t *testing.T) {
+	m := new(internal.MockTestingT)
+	testMap := map[string]int{"a": 1}
+	assert.ThatMap(m, testMap).NotEmpty()
+	assert.ThatString(t, m.String()).Equal("")
+
+	m.Reset()
+	assert.ThatMap(m, map[string]int(nil)).NotEmpty()
+	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected map to be non-empty, but it is empty
+  actual: null`)
+
+	m.Reset()
+	assert.ThatMap(m, map[string]int{}).Must().NotEmpty("index is 0")
+	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to be non-empty, but it is empty
+  actual: {}
+ message: "index is 0"`)
+}
+
 func TestMap_Equal(t *testing.T) {
 	m := new(internal.MockTestingT)
 	testMap := map[string]int{"a": 1}
