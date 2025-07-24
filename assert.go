@@ -74,7 +74,7 @@ func That(t internal.TestingT, v interface{}) *Assertion {
 func (a *Assertion) True(msg ...string) *Assertion {
 	a.t.Helper()
 	if b, _ := a.v.(bool); !b {
-		str := fmt.Sprintf(`expected value to be true, but it is false`)
+		str := `expected value to be true, but it is false`
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -84,7 +84,7 @@ func (a *Assertion) True(msg ...string) *Assertion {
 func (a *Assertion) False(msg ...string) *Assertion {
 	a.t.Helper()
 	if b, _ := a.v.(bool); b {
-		str := fmt.Sprintf(`expected value to be false, but it is true`)
+		str := `expected value to be false, but it is true`
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -124,7 +124,7 @@ func (a *Assertion) Nil(msg ...string) *Assertion {
 func (a *Assertion) NotNil(msg ...string) *Assertion {
 	a.t.Helper()
 	if isNil(reflect.ValueOf(a.v)) {
-		str := fmt.Sprintf(`expected value to be non-nil, but it is nil`)
+		str := `expected value to be non-nil, but it is nil`
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a

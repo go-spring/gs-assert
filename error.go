@@ -55,7 +55,7 @@ func (a *ErrorAssertion) Nil(msg ...string) *ErrorAssertion {
 func (a *ErrorAssertion) NotNil(msg ...string) *ErrorAssertion {
 	a.t.Helper()
 	if a.v == nil {
-		str := fmt.Sprintf(`expected error to be non-nil, but it is nil`)
+		str := `expected error to be non-nil, but it is nil`
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -91,7 +91,7 @@ expected: %v`, a.v, target)
 func (a *ErrorAssertion) Matches(expr string, msg ...string) *ErrorAssertion {
 	a.t.Helper()
 	if a.v == nil {
-		str := fmt.Sprintf(`expected non-nil error, but got nil`)
+		str := `expected non-nil error, but got nil`
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return a
 	}
