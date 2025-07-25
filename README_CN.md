@@ -1,5 +1,15 @@
 # assert
 
+<div>
+   <img src="https://img.shields.io/github/license/go-spring/assert" alt="license"/>
+   <img src="https://img.shields.io/github/go-mod/go-version/go-spring/assert" alt="go-version"/>
+   <img src="https://img.shields.io/github/v/release/go-spring/assert?include_prereleases" alt="release"/>
+   <a href="https://codecov.io/gh/go-spring/assert" > 
+      <img src="https://codecov.io/gh/go-spring/assert/graph/badge.svg?token=SX7CV1T0O8" alt="test-coverage"/>
+   </a>
+   <a href="https://deepwiki.com/go-spring/assert"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+</div>
+
 [English](README.md) | [中文](README_CN.md)
 
 Go-Spring::assert 是一个用于 Go 单元测试的断言库，旨在提高测试代码的可读性和可维护性，
