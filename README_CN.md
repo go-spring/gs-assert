@@ -127,8 +127,8 @@ func TestAssertExample(t *testing.T) {
 
 func TestRequireExample(t *testing.T) {
     // 使用 require 模块进行断言，如果断言失败会立即终止测试
-    require.Nil(t, someFunctionThatReturnsNil())
-    require.Equal(t, 42, someFunctionThatReturns42())
+    require.That(t, t).NotNil().NotSame(nil)
+    require.That(t, 1+1).Equal(2).NotEqual(3)
 }
 
 func TestPanicExample(t *testing.T) {

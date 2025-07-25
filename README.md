@@ -128,22 +128,22 @@ the panic message matches an expression.
 
 ```go
 func TestAssertExample(t *testing.T) {
-  // Use assert module for assertions, test continues on failure
-  assert.That(t, t).NotNil().NotSame(nil)
-  assert.That(t, 1+1).Equal(2).NotEqual(3)
+    // Use assert module for assertions, test continues on failure
+    assert.That(t, t).NotNil().NotSame(nil)
+    assert.That(t, 1+1).Equal(2).NotEqual(3)
 }
 
 func TestRequireExample(t *testing.T) {
-  // Use require module for assertions, test stops on failure
-  require.Nil(t, someFunctionThatReturnsNil())
-  require.Equal(t, 42, someFunctionThatReturns42())
+    // Use require module for assertions, test stops on failure
+    require.That(t, t).NotNil().NotSame(nil)
+    require.That(t, 1+1).Equal(2).NotEqual(3)
 }
 
 func TestPanicExample(t *testing.T) {
-  // Assert function panics and message matches the expression
-  require.Panic(t, func () {
-    panic("something went wrong")
-  }, "something went wrong")
+    // Assert function panics and message matches the expression
+    require.Panic(t, func () {
+        panic("something went wrong")
+    }, "something went wrong")
 }
 ```
 
