@@ -26,8 +26,8 @@ jobs:
       - name: Run tests
         run: go test -count=1 -coverprofile=coverage.txt ./...
 
-      - name: Upload results to Codecov
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: github.com/go-spring/assert
+          slug: go-spring/assert
