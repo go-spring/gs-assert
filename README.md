@@ -1,18 +1,18 @@
-# assert
+# gs-assert
 
 <div>
-   <img src="https://img.shields.io/github/license/go-spring/assert" alt="license"/>
-   <img src="https://img.shields.io/github/go-mod/go-version/go-spring/assert" alt="go-version"/>
-   <img src="https://img.shields.io/github/v/release/go-spring/assert?include_prereleases" alt="release"/>
-   <a href="https://codecov.io/gh/go-spring/assert" > 
-      <img src="https://codecov.io/gh/go-spring/assert/graph/badge.svg?token=SX7CV1T0O8" alt="test-coverage"/>
+   <img src="https://img.shields.io/github/license/go-spring/gs-assert" alt="license"/>
+   <img src="https://img.shields.io/github/go-mod/go-version/go-spring/gs-assert" alt="go-version"/>
+   <img src="https://img.shields.io/github/v/release/go-spring/gs-assert?include_prereleases" alt="release"/>
+   <a href="https://codecov.io/gh/go-spring/gs-assert" > 
+      <img src="https://codecov.io/gh/go-spring/gs-assert/graph/badge.svg?token=SX7CV1T0O8" alt="test-coverage"/>
    </a>
-   <a href="https://deepwiki.com/go-spring/assert"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+   <a href="https://deepwiki.com/go-spring/gs-assert"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </div>
 
 [English](README.md) | [中文](README_CN.md)
 
-Go-Spring::assert is an assertion library for Go unit tests,
+gs-assert is an assertion library for Go unit tests,
 designed to enhance test code readability and maintainability.
 It provides functional and fluent assertion styles and
 supports assertions for multiple data structures,
@@ -20,11 +20,11 @@ including generic values, strings, numbers, slices, maps, and `error`.
 
 ## Installation Guide
 
-To use the assert library, ensure you have Go installed.
-Then, install assert using the following command:
+To use the `gs-assert` library, ensure you have Go installed.
+Then, install `gs-assert` using the following command:
 
 ```bash
-go get github.com/go-spring/assert
+go get github.com/go-spring/gs-assert
 ```
 
 ## Features
@@ -127,6 +127,9 @@ the panic message matches an expression.
 ## Usage Examples
 
 ```go
+import "github.com/go-spring/gs-assert/assert"
+import "github.com/go-spring/gs-assert/require"
+
 func TestAssertExample(t *testing.T) {
     // Use assert module for assertions, test continues on failure
     assert.That(t, t).NotNil().NotSame(nil)

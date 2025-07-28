@@ -19,7 +19,7 @@ package assert
 import (
 	"fmt"
 
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 // MapAssertion encapsulates a map value and a test handler for making assertions on the map.

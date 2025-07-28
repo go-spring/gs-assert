@@ -30,4 +30,4 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: go-spring/assert
+          slug: go-spring/gs-assert

@@ -20,8 +20,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/go-spring/assert"
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/assert"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 func TestNumber_Equal(t *testing.T) {
@@ -36,7 +36,7 @@ func TestNumber_Equal(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be equal to 10, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().Equal(10, "index is 0")
+	assert.ThatNumber(m, 5).Require().Equal(10, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be equal to 10, but it is 5
  message: "index is 0"`)
 }
@@ -53,7 +53,7 @@ func TestNumber_NotEqual(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number not to be equal to 5, but it is`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().NotEqual(5, "index is 0")
+	assert.ThatNumber(m, 5).Require().NotEqual(5, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number not to be equal to 5, but it is
  message: "index is 0"`)
 }
@@ -70,7 +70,7 @@ func TestNumber_GreaterThan(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be greater than 10, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().GreaterThan(10, "index is 0")
+	assert.ThatNumber(m, 5).Require().GreaterThan(10, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be greater than 10, but it is 5
  message: "index is 0"`)
 }
@@ -87,7 +87,7 @@ func TestNumber_GreaterOrEqual(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be greater than or equal to 10, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().GreaterOrEqual(10, "index is 0")
+	assert.ThatNumber(m, 5).Require().GreaterOrEqual(10, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be greater than or equal to 10, but it is 5
  message: "index is 0"`)
 }
@@ -104,7 +104,7 @@ func TestNumber_LessThan(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be less than 5, but it is 10`)
 
 	m.Reset()
-	assert.ThatNumber(m, 10).Must().LessThan(5, "index is 0")
+	assert.ThatNumber(m, 10).Require().LessThan(5, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be less than 5, but it is 10
  message: "index is 0"`)
 }
@@ -121,7 +121,7 @@ func TestNumber_LessOrEqual(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be less than or equal to 5, but it is 10`)
 
 	m.Reset()
-	assert.ThatNumber(m, 10).Must().LessOrEqual(5, "index is 0")
+	assert.ThatNumber(m, 10).Require().LessOrEqual(5, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be less than or equal to 5, but it is 10
  message: "index is 0"`)
 }
@@ -138,7 +138,7 @@ func TestNumber_Zero(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be zero, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().Zero("index is 0")
+	assert.ThatNumber(m, 5).Require().Zero("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be zero, but it is 5
  message: "index is 0"`)
 }
@@ -155,7 +155,7 @@ func TestNumber_NotZero(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number not to be zero, but it is 0`)
 
 	m.Reset()
-	assert.ThatNumber(m, 0).Must().NotZero("index is 0")
+	assert.ThatNumber(m, 0).Require().NotZero("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number not to be zero, but it is 0
  message: "index is 0"`)
 }
@@ -172,7 +172,7 @@ func TestNumber_Positive(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be positive, but it is -5`)
 
 	m.Reset()
-	assert.ThatNumber(m, -5).Must().Positive("index is 0")
+	assert.ThatNumber(m, -5).Require().Positive("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be positive, but it is -5
  message: "index is 0"`)
 }
@@ -189,7 +189,7 @@ func TestNumber_NotPositive(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be non-positive, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().NotPositive("index is 0")
+	assert.ThatNumber(m, 5).Require().NotPositive("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be non-positive, but it is 5
  message: "index is 0"`)
 }
@@ -206,7 +206,7 @@ func TestNumber_Negative(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be negative, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().Negative("index is 0")
+	assert.ThatNumber(m, 5).Require().Negative("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be negative, but it is 5
  message: "index is 0"`)
 }
@@ -223,7 +223,7 @@ func TestNumber_NotNegative(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be non-negative, but it is -5`)
 
 	m.Reset()
-	assert.ThatNumber(m, -5).Must().NotNegative("index is 0")
+	assert.ThatNumber(m, -5).Require().NotNegative("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be non-negative, but it is -5
  message: "index is 0"`)
 }
@@ -240,7 +240,7 @@ func TestNumber_Between(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be between 1 and 10, but it is 0`)
 
 	m.Reset()
-	assert.ThatNumber(m, 0).Must().Between(1, 10, "index is 0")
+	assert.ThatNumber(m, 0).Require().Between(1, 10, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be between 1 and 10, but it is 0
  message: "index is 0"`)
 }
@@ -257,7 +257,7 @@ func TestNumber_NotBetween(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number not to be between 1 and 10, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5).Must().NotBetween(1, 10, "index is 0")
+	assert.ThatNumber(m, 5).Require().NotBetween(1, 10, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number not to be between 1 and 10, but it is 5
  message: "index is 0"`)
 }
@@ -277,7 +277,7 @@ func TestNumber_InDelta(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be within ±0.3 of 5, but it is 5.6`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5.6).Must().InDelta(5.0, 0.3, "index is 0")
+	assert.ThatNumber(m, 5.6).Require().InDelta(5.0, 0.3, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be within ±0.3 of 5, but it is 5.6
  message: "index is 0"`)
 }
@@ -294,7 +294,7 @@ func TestNumber_IsNaN(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be NaN, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5.0).Must().IsNaN("index is 0")
+	assert.ThatNumber(m, 5.0).Require().IsNaN("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be NaN, but it is 5
  message: "index is 0"`)
 }
@@ -315,7 +315,7 @@ func TestNumber_IsInf(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be +Inf, but it is 5`)
 
 	m.Reset()
-	assert.ThatNumber(m, 5.0).Must().IsInf(-1, "index is 0")
+	assert.ThatNumber(m, 5.0).Require().IsInf(-1, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be -Inf, but it is 5
  message: "index is 0"`)
 }
@@ -340,7 +340,7 @@ func TestNumber_IsFinite(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected number to be finite, but it is +Inf`)
 
 	m.Reset()
-	assert.ThatNumber(m, math.Inf(-1)).Must().IsFinite("index is 0")
+	assert.ThatNumber(m, math.Inf(-1)).Require().IsFinite("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected number to be finite, but it is -Inf
  message: "index is 0"`)
 }

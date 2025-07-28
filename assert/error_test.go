@@ -20,8 +20,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/go-spring/assert"
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/assert"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 func TestError_Nil(t *testing.T) {
@@ -37,7 +37,7 @@ func TestError_Nil(t *testing.T) {
   actual: (*errors.errorString) "this is an error"`)
 
 	m.Reset()
-	assert.ThatError(m, errors.New("this is an error")).Must().Nil("index is 0")
+	assert.ThatError(m, errors.New("this is an error")).Require().Nil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error to be nil, but it is not
   actual: (*errors.errorString) "this is an error"
  message: "index is 0"`)
@@ -55,7 +55,7 @@ func TestError_NotNil(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected error to be non-nil, but it is nil`)
 
 	m.Reset()
-	assert.ThatError(m, nil).Must().NotNil("index is 0")
+	assert.ThatError(m, nil).Require().NotNil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error to be non-nil, but it is nil
  message: "index is 0"`)
 }
@@ -75,7 +75,7 @@ func TestError_Is(t *testing.T) {
 expected: another error`)
 
 	m.Reset()
-	assert.ThatError(m, err).Must().Is(errors.New("another error"), "index is 0")
+	assert.ThatError(m, err).Require().Is(errors.New("another error"), "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error to be target (according to errors.Is), but they are different 
   actual: this is an error
 expected: another error
@@ -97,7 +97,7 @@ func TestError_NotIs(t *testing.T) {
 expected: this is an error`)
 
 	m.Reset()
-	assert.ThatError(m, err).Must().NotIs(err, "index is 0")
+	assert.ThatError(m, err).Require().NotIs(err, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected error not to be target (according to errors.Is), but they are equal 
   actual: this is an error
 expected: this is an error
@@ -125,11 +125,11 @@ func TestError_Matches(t *testing.T) {
  message: "index is 0"`)
 
 	m.Reset()
-	assert.ThatError(m, errors.New("there's no error")).Must().Matches("an error")
+	assert.ThatError(m, errors.New("there's no error")).Require().Matches("an error")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: got "there's no error" which does not match "an error"`)
 
 	m.Reset()
-	assert.ThatError(m, errors.New("there's no error")).Must().Matches("an error", "index is 0")
+	assert.ThatError(m, errors.New("there's no error")).Require().Matches("an error", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: got "there's no error" which does not match "an error"
  message: "index is 0"`)
 }

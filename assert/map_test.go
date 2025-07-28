@@ -19,8 +19,8 @@ package assert_test
 import (
 	"testing"
 
-	"github.com/go-spring/assert"
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/assert"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 func TestMap_Length(t *testing.T) {
@@ -37,7 +37,7 @@ func TestMap_Length(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().Length(0, "index is 0")
+	assert.ThatMap(m, testMap).Require().Length(0, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to have length 0, but it has length 1
   actual: {"a":1}
  message: "index is 0"`)
@@ -56,7 +56,7 @@ func TestMap_Nil(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{"a": 1}).Must().Nil("index is 0")
+	assert.ThatMap(m, map[string]int{"a": 1}).Require().Nil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to be nil, but it is not
   actual: {"a":1}
  message: "index is 0"`)
@@ -75,7 +75,7 @@ func TestMap_NotNil(t *testing.T) {
   actual: null`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int(nil)).Must().NotNil("index is 0")
+	assert.ThatMap(m, map[string]int(nil)).Require().NotNil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map not to be nil, but it is
   actual: null
  message: "index is 0"`)
@@ -94,7 +94,7 @@ func TestMap_IsEmpty(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{"a": 1}).Must().Empty("index is 0")
+	assert.ThatMap(m, map[string]int{"a": 1}).Require().Empty("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to be empty, but it is not
   actual: {"a":1}
  message: "index is 0"`)
@@ -112,7 +112,7 @@ func TestMap_IsNotEmpty(t *testing.T) {
   actual: null`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{}).Must().NotEmpty("index is 0")
+	assert.ThatMap(m, map[string]int{}).Require().NotEmpty("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to be non-empty, but it is empty
   actual: {}
  message: "index is 0"`)
@@ -139,7 +139,7 @@ expected: null`)
 expected: {"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().Equal(map[string]int{"a": 2}, "index is 0")
+	assert.ThatMap(m, testMap).Require().Equal(map[string]int{"a": 2}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected maps to be equal, but values for key 'a' are different
   actual: {"a":1}
 expected: {"a":2}
@@ -160,7 +160,7 @@ func TestMap_NotEqual(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().NotEqual(testMap, "index is 0")
+	assert.ThatMap(m, testMap).Require().NotEqual(testMap, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected maps to be different, but they are equal
   actual: {"a":1}
  message: "index is 0"`)
@@ -180,7 +180,7 @@ func TestMap_ContainsKey(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().ContainsKey("b", "index is 0")
+	assert.ThatMap(m, testMap).Require().ContainsKey("b", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to contain key 'b', but it is missing
   actual: {"a":1}
  message: "index is 0"`)
@@ -200,7 +200,7 @@ func TestMap_NotContainsKey(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().NotContainsKey("a", "index is 0")
+	assert.ThatMap(m, testMap).Require().NotContainsKey("a", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map not to contain key 'a', but it is found
   actual: {"a":1}
  message: "index is 0"`)
@@ -220,7 +220,7 @@ func TestMap_ContainsValue(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().ContainsValue(2, "index is 0")
+	assert.ThatMap(m, testMap).Require().ContainsValue(2, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to contain value 2, but it is missing
   actual: {"a":1}
  message: "index is 0"`)
@@ -240,7 +240,7 @@ func TestMap_NotContainsValue(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().NotContainsValue(1, "index is 0")
+	assert.ThatMap(m, testMap).Require().NotContainsValue(1, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map not to contain value 1, but it is found
   actual: {"a":1}
  message: "index is 0"`)
@@ -260,7 +260,7 @@ func TestMap_ContainsKeyValue(t *testing.T) {
   actual: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().ContainsKeyValue("a", 2, "index is 0")
+	assert.ThatMap(m, testMap).Require().ContainsKeyValue("a", 2, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value 2 for key 'a', but got 1 instead
   actual: {"a":1}
  message: "index is 0"`)
@@ -280,7 +280,7 @@ func TestMap_ContainsKeys(t *testing.T) {
   actual: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().ContainsKeys([]string{"c"}, "index is 0")
+	assert.ThatMap(m, testMap).Require().ContainsKeys([]string{"c"}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to contain key 'c', but it is missing
   actual: {"a":1,"b":2}
  message: "index is 0"`)
@@ -300,7 +300,7 @@ func TestMap_NotContainsKeys(t *testing.T) {
   actual: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().NotContainsKeys([]string{"a"}, "index is 0")
+	assert.ThatMap(m, testMap).Require().NotContainsKeys([]string{"a"}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map not to contain key 'a', but it is found
   actual: {"a":1,"b":2}
  message: "index is 0"`)
@@ -320,7 +320,7 @@ func TestMap_ContainsValues(t *testing.T) {
   actual: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().ContainsValues([]int{3}, "index is 0")
+	assert.ThatMap(m, testMap).Require().ContainsValues([]int{3}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to contain value 3, but it is missing
   actual: {"a":1,"b":2}
  message: "index is 0"`)
@@ -340,7 +340,7 @@ func TestMap_NotContainsValues(t *testing.T) {
   actual: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, testMap).Must().NotContainsValues([]int{1}, "index is 0")
+	assert.ThatMap(m, testMap).Require().NotContainsValues([]int{1}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map not to contain value 1, but it is found
   actual: {"a":1,"b":2}
  message: "index is 0"`)
@@ -360,7 +360,7 @@ func TestMap_SubsetOf(t *testing.T) {
 expected: {"a":1}`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{"a": 1}).Must().SubsetOf(map[string]int{"a": 2}, "index is 0")
+	assert.ThatMap(m, map[string]int{"a": 1}).Require().SubsetOf(map[string]int{"a": 2}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to be a subset, but values for key 'a' are different
   actual: {"a":1}
 expected: {"a":2}
@@ -381,7 +381,7 @@ func TestMap_SupersetOf(t *testing.T) {
 expected: {"a":1,"b":2}`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{"a": 1}).Must().SupersetOf(map[string]int{"a": 2}, "index is 0")
+	assert.ThatMap(m, map[string]int{"a": 1}).Require().SupersetOf(map[string]int{"a": 2}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected map to be a superset, but values for key 'a' are different
   actual: {"a":1}
 expected: {"a":2}
@@ -402,7 +402,7 @@ func TestMap_HasSameKeys(t *testing.T) {
 expected: {"c":3}`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{"a": 1, "b": 2}).Must().HasSameKeys(map[string]int{"b": 2, "c": 3}, "index is 0")
+	assert.ThatMap(m, map[string]int{"a": 1, "b": 2}).Require().HasSameKeys(map[string]int{"b": 2, "c": 3}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected maps to have the same keys, but key 'a' is missing
   actual: {"a":1,"b":2}
 expected: {"b":2,"c":3}
@@ -423,7 +423,7 @@ func TestMap_HasSameValues(t *testing.T) {
 expected: {"c":3}`)
 
 	m.Reset()
-	assert.ThatMap(m, map[string]int{"a": 1, "b": 2}).Must().HasSameValues(map[string]int{"b": 2, "c": 3}, "index is 0")
+	assert.ThatMap(m, map[string]int{"a": 1, "b": 2}).Require().HasSameValues(map[string]int{"b": 2, "c": 3}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected maps to have the same values, but their values are different
   actual: {"a":1,"b":2}
 expected: {"b":2,"c":3}

@@ -21,8 +21,8 @@ package require
 import (
 	"cmp"
 
-	"github.com/go-spring/assert"
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/assert"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 // Panic asserts that fn panics and the panic message matches expr.
@@ -34,30 +34,30 @@ func Panic(t internal.TestingT, fn func(), expr string, msg ...string) {
 
 // That creates an Assertion for the given value v and test context t.
 func That(t internal.TestingT, v interface{}) *assert.Assertion {
-	return assert.That(t, v).Must()
+	return assert.That(t, v).Require()
 }
 
 // ThatString returns a StringAssertion for the given testing object and string value.
 func ThatString(t internal.TestingT, v string) *assert.StringAssertion {
-	return assert.ThatString(t, v).Must()
+	return assert.ThatString(t, v).Require()
 }
 
 // ThatNumber returns a NumberAssertion for the given testing object and number value.
 func ThatNumber[T assert.Number](t internal.TestingT, v T) *assert.NumberAssertion[T] {
-	return assert.ThatNumber[T](t, v).Must()
+	return assert.ThatNumber[T](t, v).Require()
 }
 
 // ThatError returns a new ErrorAssertion for the given error value.
 func ThatError(t internal.TestingT, v error) *assert.ErrorAssertion {
-	return assert.ThatError(t, v).Must()
+	return assert.ThatError(t, v).Require()
 }
 
 // ThatSlice returns a SliceAssertion for the given testing object and slice value.
 func ThatSlice[T cmp.Ordered](t internal.TestingT, v []T) *assert.SliceAssertion[T] {
-	return assert.ThatSlice[T](t, v).Must()
+	return assert.ThatSlice[T](t, v).Require()
 }
 
 // ThatMap returns a MapAssertion for the given testing object and map value.
 func ThatMap[K, V comparable](t internal.TestingT, v map[K]V) *assert.MapAssertion[K, V] {
-	return assert.ThatMap[K, V](t, v).Must()
+	return assert.ThatMap[K, V](t, v).Require()
 }

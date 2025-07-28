@@ -24,8 +24,8 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/go-spring/assert"
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/assert"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 func TestPanic(t *testing.T) {
@@ -77,7 +77,7 @@ func TestThat_True(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expected value to be true, but it is false")
 
 	m.Reset()
-	assert.That(m, false).Must().True("index is 0")
+	assert.That(m, false).Require().True("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be true, but it is false
  message: "index is 0"`)
 }
@@ -94,7 +94,7 @@ func TestThat_False(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expected value to be false, but it is true")
 
 	m.Reset()
-	assert.That(m, true).Must().False("index is 0")
+	assert.That(m, true).Require().False("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be false, but it is true
  message: "index is 0"`)
 }
@@ -122,7 +122,7 @@ func TestThat_Nil(t *testing.T) {
   actual: (int) 3`)
 
 	m.Reset()
-	assert.That(m, 3).Must().Nil("index is 0")
+	assert.That(m, 3).Require().Nil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be nil, but it is not
   actual: (int) 3
  message: "index is 0"`)
@@ -148,7 +148,7 @@ func TestThat_NotNil(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal(`error# Assertion failed: expected value to be non-nil, but it is nil`)
 
 	m.Reset()
-	assert.That(m, nil).Must().NotNil("index is 0")
+	assert.That(m, nil).Require().NotNil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected value to be non-nil, but it is nil
  message: "index is 0"`)
 }
@@ -193,13 +193,13 @@ expected: (assert_test.AnotherSimpleText) assert_test.AnotherSimpleText{text:"a"
 expected: (assert_test.SimpleMessage) assert_test.SimpleMessage{message:"a"}`)
 
 	m.Reset()
-	assert.That(m, 0).Must().Equal("0")
+	assert.That(m, 0).Require().Equal("0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be equal, but they are different
   actual: (int) 0
 expected: (string) "0"`)
 
 	m.Reset()
-	assert.That(m, 0).Must().Equal("0", "index is 0")
+	assert.That(m, 0).Require().Equal("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be equal, but they are different
   actual: (int) 0
 expected: (string) "0"
@@ -219,7 +219,7 @@ func TestThat_NotEqual(t *testing.T) {
   actual: (string) "0"`)
 
 	m.Reset()
-	assert.That(m, "0").Must().NotEqual("0", "index is 0")
+	assert.That(m, "0").Require().NotEqual("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be different, but they are equal
   actual: (string) "0"
  message: "index is 0"`)
@@ -239,7 +239,7 @@ func TestThat_Same(t *testing.T) {
 expected: (string) "0"`)
 
 	m.Reset()
-	assert.That(m, 0).Must().Same("0", "index is 0")
+	assert.That(m, 0).Require().Same("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be same, but they are different
   actual: (int) 0
 expected: (string) "0"
@@ -259,7 +259,7 @@ func TestThat_NotSame(t *testing.T) {
   actual: (string) "0"`)
 
 	m.Reset()
-	assert.That(m, "0").Must().NotSame("0", "index is 0")
+	assert.That(m, "0").Require().NotSame("0", "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected values to be different, but they are same
   actual: (string) "0"
  message: "index is 0"`)
@@ -279,7 +279,7 @@ func TestThat_TypeOf(t *testing.T) {
 expected: fmt.Stringer`)
 
 	m.Reset()
-	assert.That(m, "string").Must().TypeOf((*fmt.Stringer)(nil))
+	assert.That(m, "string").Require().TypeOf((*fmt.Stringer)(nil))
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected type to be assignable to target, but it does not
   actual: string
 expected: fmt.Stringer`)
@@ -297,7 +297,7 @@ func TestThat_Implements(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal("error# Assertion failed: expected target to implement should be interface")
 
 	m.Reset()
-	assert.That(m, new(int)).Must().Implements((*io.Reader)(nil))
+	assert.That(m, new(int)).Require().Implements((*io.Reader)(nil))
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected type to implement target interface, but it does not
   actual: *int
 expected: io.Reader`)
@@ -341,7 +341,7 @@ func TestThat_Has(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Has' on type *assert_test.Node should return only a bool, but it does not")
 
 	m.Reset()
-	assert.That(m, &Tree{}).Must().Has("2")
+	assert.That(m, &Tree{}).Require().Has("2")
 	assert.ThatString(t, m.String()).Equal("fatal# Assertion failed: method 'Has' on type *assert_test.Tree should return true when using param \"2\", but it does not")
 }
 
@@ -361,6 +361,6 @@ func TestThat_Contains(t *testing.T) {
 	assert.ThatString(t, m.String()).Equal("error# Assertion failed: method 'Contains' on type *assert_test.Node should return only a bool, but it does not")
 
 	m.Reset()
-	assert.That(m, &Tree{}).Must().Contains("2")
+	assert.That(m, &Tree{}).Require().Contains("2")
 	assert.ThatString(t, m.String()).Equal("fatal# Assertion failed: method 'Contains' on type *assert_test.Tree should return true when using param \"2\", but it does not")
 }

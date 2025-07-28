@@ -23,7 +23,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 // StringAssertion encapsulates a string value and a test handler for making assertions on the string.

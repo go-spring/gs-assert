@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 // ErrorAssertion provides assertion methods for values of type error.

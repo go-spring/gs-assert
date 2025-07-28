@@ -26,7 +26,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 // Panic asserts that fn panics and the panic message matches expr.
@@ -40,8 +40,8 @@ type AssertionBase[T any] struct {
 	fatalOnFailure bool
 }
 
-// Must is intended for internal use by the `require` package only. Do not call it directly.
-func (c *AssertionBase[T]) Must() T {
+// Require is intended for internal use by the `require` package only. Do not call it directly.
+func (c *AssertionBase[T]) Require() T {
 	c.fatalOnFailure = true
 	return *(*T)(unsafe.Pointer(&c))
 }

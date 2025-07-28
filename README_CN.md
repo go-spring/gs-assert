@@ -1,27 +1,27 @@
-# assert
+# gs-assert
 
 <div>
-   <img src="https://img.shields.io/github/license/go-spring/assert" alt="license"/>
-   <img src="https://img.shields.io/github/go-mod/go-version/go-spring/assert" alt="go-version"/>
-   <img src="https://img.shields.io/github/v/release/go-spring/assert?include_prereleases" alt="release"/>
-   <a href="https://codecov.io/gh/go-spring/assert" > 
-      <img src="https://codecov.io/gh/go-spring/assert/graph/badge.svg?token=SX7CV1T0O8" alt="test-coverage"/>
+   <img src="https://img.shields.io/github/license/go-spring/gs-assert" alt="license"/>
+   <img src="https://img.shields.io/github/go-mod/go-version/go-spring/gs-assert" alt="go-version"/>
+   <img src="https://img.shields.io/github/v/release/go-spring/gs-assert?include_prereleases" alt="release"/>
+   <a href="https://codecov.io/gh/go-spring/gs-assert" > 
+      <img src="https://codecov.io/gh/go-spring/gs-assert/graph/badge.svg?token=SX7CV1T0O8" alt="test-coverage"/>
    </a>
-   <a href="https://deepwiki.com/go-spring/assert"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+   <a href="https://deepwiki.com/go-spring/gs-assert"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </div>
 
 [English](README.md) | [中文](README_CN.md)
 
-Go-Spring::assert 是一个用于 Go 单元测试的断言库，旨在提高测试代码的可读性和可维护性，
+gs-assert 是一个用于 Go 单元测试的断言库，旨在提高测试代码的可读性和可维护性，
 提供功能性和流畅性的断言风格，支持多种数据结构的断言，包括通用值、字符串、数字、切片、
 映射和 `error`。
 
 ## 安装指南
 
-要使用 assert 库，首先确保你已经安装了 Go。然后，你可以通过以下命令安装 assert：
+要使用 `gs-assert` 库，首先确保你已经安装了 Go。然后，你可以通过以下命令安装 `gs-assert`：
 
 ```bash
-go get github.com/go-spring/assert
+go get github.com/go-spring/gs-assert
 ```
 
 ## 功能特性
@@ -119,6 +119,9 @@ go get github.com/go-spring/assert
 ## 使用示例
 
 ```go
+import "github.com/go-spring/gs-assert/assert"
+import "github.com/go-spring/gs-assert/require"
+
 func TestAssertExample(t *testing.T) {
     // 使用 assert 模块进行断言，如果断言失败会继续执行测试
     assert.That(t, t).NotNil().NotSame(nil)

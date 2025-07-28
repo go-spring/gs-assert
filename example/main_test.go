@@ -19,13 +19,13 @@ package example
 import (
 	"testing"
 
-	springAssert "github.com/go-spring/assert"
+	springAssert "github.com/go-spring/gs-assert/assert"
 	"github.com/smartystreets/goconvey/convey"
 	testifyAssert "github.com/stretchr/testify/assert"
 )
 
 func TestSpringAssert(t *testing.T) {
-	springAssert.ThatMap(t, map[string]int{"a": 1}).Must().Equal(map[string]int{"a": 2}, "abc")
+	springAssert.ThatMap(t, map[string]int{"a": 1}).Require().Equal(map[string]int{"a": 2}, "abc")
 }
 
 func TestTestifyAssert(t *testing.T) {

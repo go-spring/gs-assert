@@ -19,8 +19,8 @@ package assert_test
 import (
 	"testing"
 
-	"github.com/go-spring/assert"
-	"github.com/go-spring/assert/internal"
+	"github.com/go-spring/gs-assert/assert"
+	"github.com/go-spring/gs-assert/internal"
 )
 
 func TestSlice_Length(t *testing.T) {
@@ -36,7 +36,7 @@ func TestSlice_Length(t *testing.T) {
   actual: [1.1,2.2]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []float64{1.1}).Must().Length(0, "index is 0")
+	assert.ThatSlice(m, []float64{1.1}).Require().Length(0, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to have length 0, but it has length 1
   actual: [1.1]
  message: "index is 0"`)
@@ -55,7 +55,7 @@ func TestSlice_Nil(t *testing.T) {
   actual: [1,2]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2}).Must().Nil("index is 0")
+	assert.ThatSlice(m, []int{1, 2}).Require().Nil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to be nil, but it is not
   actual: [1,2]
  message: "index is 0"`)
@@ -74,7 +74,7 @@ func TestSlice_NotNil(t *testing.T) {
   actual: null`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int(nil)).Must().NotNil("index is 0")
+	assert.ThatSlice(m, []int(nil)).Require().NotNil("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice not to be nil, but it is
   actual: null
  message: "index is 0"`)
@@ -93,7 +93,7 @@ func TestSlice_Empty(t *testing.T) {
   actual: [1,2]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2}).Must().Empty("index is 0")
+	assert.ThatSlice(m, []int{1, 2}).Require().Empty("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to be empty, but it is not
   actual: [1,2]
  message: "index is 0"`)
@@ -112,7 +112,7 @@ func TestSlice_NotEmpty(t *testing.T) {
   actual: []`)
 
 	m.Reset()
-	assert.ThatSlice(m, []string(nil)).Must().NotEmpty("index is 0")
+	assert.ThatSlice(m, []string(nil)).Require().NotEmpty("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice not to be empty, but it is
   actual: null
  message: "index is 0"`)
@@ -132,7 +132,7 @@ func TestSlice_Equal(t *testing.T) {
 expected: [4,5]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3}).Must().Equal([]int{1, 2, 4}, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3}).Require().Equal([]int{1, 2, 4}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slices to be equal, but values at index 2 are different
   actual: [1,2,3]
 expected: [1,2,4]
@@ -152,7 +152,7 @@ func TestSlice_NotEqual(t *testing.T) {
   actual: ["a","b"]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []string{"a", "b"}).Must().NotEqual([]string{"a", "b"}, "index is 0")
+	assert.ThatSlice(m, []string{"a", "b"}).Require().NotEqual([]string{"a", "b"}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slices to be different, but they are equal
   actual: ["a","b"]
  message: "index is 0"`)
@@ -171,7 +171,7 @@ func TestSlice_Contains(t *testing.T) {
   actual: [1,2,3]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3}).Must().Contains(4, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3}).Require().Contains(4, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to contain element 4, but it is missing
   actual: [1,2,3]
  message: "index is 0"`)
@@ -190,7 +190,7 @@ func TestSlice_NotContains(t *testing.T) {
   actual: [1,2,3]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3}).Must().NotContains(2, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3}).Require().NotContains(2, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice not to contain element 2, but it is found
   actual: [1,2,3]
  message: "index is 0"`)
@@ -214,7 +214,7 @@ func TestSlice_ContainsSlice(t *testing.T) {
      sub: [2,4]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3, 4}).Must().ContainsSlice([]int{2, 4}, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3, 4}).Require().ContainsSlice([]int{2, 4}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to contain sub-slice, but it is not
   actual: [1,2,3,4]
      sub: [2,4]
@@ -239,7 +239,7 @@ func TestSlice_NotContainsSlice(t *testing.T) {
      sub: [2,3]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3, 4}).Must().NotContainsSlice([]int{2, 3}, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3, 4}).Require().NotContainsSlice([]int{2, 3}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice not to contain sub-slice, but it is
   actual: [1,2,3,4]
      sub: [2,3]
@@ -260,7 +260,7 @@ func TestSlice_HasPrefix(t *testing.T) {
   prefix: [1,2,3,4]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3}).Must().HasPrefix([]int{2, 3}, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3}).Require().HasPrefix([]int{2, 3}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to start with prefix, but it is not
   actual: [1,2,3]
   prefix: [2,3]
@@ -281,7 +281,7 @@ func TestSlice_HasSuffix(t *testing.T) {
   suffix: [1,2,3,4]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3}).Must().HasSuffix([]int{1, 2}, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3}).Require().HasSuffix([]int{1, 2}, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected slice to end with suffix, but it is not
   actual: [1,2,3]
   suffix: [1,2]
@@ -301,7 +301,7 @@ func TestSlice_AllUnique(t *testing.T) {
   actual: [1,2,1]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 1}).Must().AllUnique("index is 0")
+	assert.ThatSlice(m, []int{1, 2, 1}).Require().AllUnique("index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected all elements in the slice to be unique, but duplicate element 1 is found
   actual: [1,2,1]
  message: "index is 0"`)
@@ -320,7 +320,7 @@ func TestSlice_AllMatches(t *testing.T) {
   actual: [2,3,4,6]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{2, 3, 4, 6}).Must().AllMatches(func(n int) bool { return n%2 == 0 }, "index is 0")
+	assert.ThatSlice(m, []int{2, 3, 4, 6}).Require().AllMatches(func(n int) bool { return n%2 == 0 }, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected all elements in the slice to satisfy the condition, but element 3 does not
   actual: [2,3,4,6]
  message: "index is 0"`)
@@ -339,7 +339,7 @@ func TestSlice_AnyMatches(t *testing.T) {
   actual: [1,3,5,7]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 3, 5, 7}).Must().AnyMatches(func(n int) bool { return n%2 == 0 }, "index is 0")
+	assert.ThatSlice(m, []int{1, 3, 5, 7}).Require().AnyMatches(func(n int) bool { return n%2 == 0 }, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected at least one element in the slice to satisfy the condition, but none do
   actual: [1,3,5,7]
  message: "index is 0"`)
@@ -358,7 +358,7 @@ func TestSlice_NoneMatches(t *testing.T) {
   actual: [1,2,3,5]`)
 
 	m.Reset()
-	assert.ThatSlice(m, []int{1, 2, 3, 5}).Must().NoneMatches(func(n int) bool { return n%2 == 0 }, "index is 0")
+	assert.ThatSlice(m, []int{1, 2, 3, 5}).Require().NoneMatches(func(n int) bool { return n%2 == 0 }, "index is 0")
 	assert.ThatString(t, m.String()).Equal(`fatal# Assertion failed: expected no element in the slice to satisfy the condition, but element 2 does
   actual: [1,2,3,5]
  message: "index is 0"`)
