@@ -19,8 +19,6 @@
 package require
 
 import (
-	"cmp"
-
 	"github.com/go-spring/gs-assert/assert"
 	"github.com/go-spring/gs-assert/internal"
 )
@@ -53,7 +51,7 @@ func ThatError(t internal.TestingT, v error) *assert.ErrorAssertion {
 }
 
 // ThatSlice returns a SliceAssertion for the given testing object and slice value.
-func ThatSlice[T cmp.Ordered](t internal.TestingT, v []T) *assert.SliceAssertion[T] {
+func ThatSlice[T comparable](t internal.TestingT, v []T) *assert.SliceAssertion[T] {
 	return assert.ThatSlice[T](t, v).Require()
 }
 
