@@ -31,7 +31,7 @@ func Panic(t internal.TestingT, fn func(), expr string, msg ...string) {
 }
 
 // That creates an Assertion for the given value v and test context t.
-func That(t internal.TestingT, v interface{}) *assert.Assertion {
+func That(t internal.TestingT, v any) *assert.Assertion {
 	return assert.That(t, v).Require()
 }
 

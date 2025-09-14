@@ -27,8 +27,8 @@ import (
 // It provides basic methods for reporting test errors or failures.
 type TestingT interface {
 	Helper()
-	Error(args ...interface{})
-	Fatal(args ...interface{})
+	Error(args ...any)
+	Fatal(args ...any)
 }
 
 // MockTestingT simulates *testing.T for testing purposes.

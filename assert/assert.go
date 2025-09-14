@@ -24,46 +24,78 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"unsafe"
 
 	"github.com/go-spring/gs-assert/internal"
 )
 
-// Panic asserts that fn panics and the panic message matches expr.
-// It reports an error if fn does not panic or if the recovered message does not satisfy expr.
+// Panic asserts that `fn` panics and the panic message matches `expr`.
+// It reports an error if `fn` does not panic or if the recovered message does not satisfy `expr`.
 func Panic(t internal.TestingT, fn func(), expr string, msg ...string) {
 	t.Helper()
 	internal.Panic(t, false, fn, expr, msg...)
 }
 
+// AssertionBase provides common functionality for `Assertion` and `Require`.
 type AssertionBase[T any] struct {
 	fatalOnFailure bool
 }
 
-// Require is intended for internal use by the `require` package only. Do not call it directly.
+// Require is intended for internal use by the `require` package only.
+// IMPORTANT: Do not call it directly!
 func (c *AssertionBase[T]) Require() T {
 	c.fatalOnFailure = true
 	return *(*T)(unsafe.Pointer(&c))
 }
 
-// toJsonString converts the given value to a JSON string.
-func (c *AssertionBase[T]) toJsonString(v interface{}) string {
+// ToJsonString converts the given value to a JSON string.
+func ToJsonString(v any) string {
 	b, err := json.Marshal(v)
 	if err != nil {
-		return err.Error()
+		return "error: " + err.Error()
 	}
 	return string(b)
+}
+
+// ToPrettyString converts the given value to a pretty string.
+func ToPrettyString(v any) string {
+	fv := reflect.ValueOf(v)
+	if v == nil || isNil(fv) {
+		return "nil"
+	}
+
+	switch fv.Kind() {
+	case reflect.Func:
+		return fmt.Sprintf("(%v)", v)
+	default: // for linter
+	}
+
+	s := fmt.Sprintf("%#v", v)
+	s = strings.TrimLeft(s, "&")
+	s = strings.TrimLeft(s, "*")
+	if strings.HasPrefix(s, "(") {
+		s = s[strings.Index(s, ")")+1:]
+	}
+	s = strings.TrimSpace(s)
+
+	typ := reflect.TypeOf(v).String()
+	typ = strings.TrimLeft(typ, "*")
+	if strings.HasPrefix(s, typ) {
+		return strings.TrimPrefix(s, typ)
+	}
+	return s
 }
 
 // Assertion wraps a test context and a value for fluent assertions.
 type Assertion struct {
 	AssertionBase[*Assertion]
 	t internal.TestingT
-	v interface{}
+	v any
 }
 
 // That creates an Assertion for the given value v and test context t.
-func That(t internal.TestingT, v interface{}) *Assertion {
+func That(t internal.TestingT, v any) *Assertion {
 	return &Assertion{
 		t: t,
 		v: v,
@@ -109,12 +141,12 @@ func isNil(v reflect.Value) bool {
 func (a *Assertion) Nil(msg ...string) *Assertion {
 	a.t.Helper()
 	// Why can't we use got==nil to judge？Because if
-	// a := (*int)(nil)        // %T == *int
-	// b := (interface{})(nil) // %T == <nil>
+	// a := (*int)(nil) // %T == *int
+	// b := (any)(nil)  // %T == <nil>
 	// then a==b is false, because they are different types.
 	if !isNil(reflect.ValueOf(a.v)) {
 		str := fmt.Sprintf(`expected value to be nil, but it is not
-  actual: (%T) %#v`, a.v, a.v)
+  actual: (%T) %s`, a.v, ToPrettyString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -130,14 +162,14 @@ func (a *Assertion) NotNil(msg ...string) *Assertion {
 	return a
 }
 
-// Equal asserts that the wrapped value v is deeply equal to expect.
+// Equal asserts that the wrapped value v is `reflect.DeepEqual` to expect.
 // It reports an error if the values are not deeply equal.
-func (a *Assertion) Equal(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) Equal(expect any, msg ...string) *Assertion {
 	a.t.Helper()
 	if !reflect.DeepEqual(a.v, expect) {
 		str := fmt.Sprintf(`expected values to be equal, but they are different
-  actual: (%T) %#v
-expected: (%T) %#v`, a.v, a.v, expect, expect)
+  actual: (%T) %s
+expected: (%T) %s`, a.v, ToPrettyString(a.v), expect, ToPrettyString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -145,11 +177,11 @@ expected: (%T) %#v`, a.v, a.v, expect, expect)
 
 // NotEqual asserts that the wrapped value v is not deeply equal to expect.
 // It reports an error if the values are deeply equal.
-func (a *Assertion) NotEqual(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) NotEqual(expect any, msg ...string) *Assertion {
 	a.t.Helper()
 	if reflect.DeepEqual(a.v, expect) {
 		str := fmt.Sprintf(`expected values to be different, but they are equal
-  actual: (%T) %#v`, a.v, a.v)
+  actual: (%T) %s`, a.v, ToPrettyString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -157,12 +189,12 @@ func (a *Assertion) NotEqual(expect interface{}, msg ...string) *Assertion {
 
 // Same asserts that the wrapped value v and expect are the same (using Go ==).
 // It reports an error if v != expect.
-func (a *Assertion) Same(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) Same(expect any, msg ...string) *Assertion {
 	a.t.Helper()
 	if a.v != expect {
 		str := fmt.Sprintf(`expected values to be same, but they are different
-  actual: (%T) %#v
-expected: (%T) %#v`, a.v, a.v, expect, expect)
+  actual: (%T) %s
+expected: (%T) %s`, a.v, ToPrettyString(a.v), expect, ToPrettyString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -170,11 +202,11 @@ expected: (%T) %#v`, a.v, a.v, expect, expect)
 
 // NotSame asserts that the wrapped value v and expect are not the same (using Go !=).
 // It reports an error if v == expect.
-func (a *Assertion) NotSame(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) NotSame(expect any, msg ...string) *Assertion {
 	a.t.Helper()
 	if a.v == expect {
 		str := fmt.Sprintf(`expected values to be different, but they are same
-  actual: (%T) %#v`, a.v, a.v)
+  actual: (%T) %s`, a.v, ToPrettyString(a.v))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -183,7 +215,7 @@ func (a *Assertion) NotSame(expect interface{}, msg ...string) *Assertion {
 // TypeOf asserts that the type of the wrapped value v is assignable to the type of expect.
 // It supports pointer to interface types.
 // It reports an error if the types are not assignable.
-func (a *Assertion) TypeOf(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) TypeOf(expect any, msg ...string) *Assertion {
 	a.t.Helper()
 
 	e1 := reflect.TypeOf(a.v)
@@ -204,7 +236,7 @@ expected: %s`, e1.String(), e2.String())
 // Implements asserts that the type of the wrapped value v implements the interface type of expect.
 // The expect parameter must be an interface or pointer to interface.
 // It reports an error if v does not implement the interface.
-func (a *Assertion) Implements(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) Implements(expect any, msg ...string) *Assertion {
 	a.t.Helper()
 
 	e1 := reflect.TypeOf(a.v)
@@ -229,8 +261,14 @@ expected: %s`, e1.String(), e2.String())
 
 // Has asserts that the wrapped value v has a method named 'Has' that returns true when passed expect.
 // It reports an error if the method does not exist or returns false.
-func (a *Assertion) Has(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) Has(expect any, msg ...string) *Assertion {
 	a.t.Helper()
+
+	if isNil(reflect.ValueOf(a.v)) {
+		str := `method 'Has' not found on type <nil>`
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+		return a
+	}
 
 	m := reflect.ValueOf(a.v).MethodByName("Has")
 	if !m.IsValid() {
@@ -247,7 +285,7 @@ func (a *Assertion) Has(expect interface{}, msg ...string) *Assertion {
 
 	ret := m.Call([]reflect.Value{reflect.ValueOf(expect)})
 	if !ret[0].Bool() {
-		str := fmt.Sprintf(`method 'Has' on type %T should return true when using param %#v, but it does not`, a.v, expect)
+		str := fmt.Sprintf(`method 'Has' on type %T should return true when using param %s, but it does not`, a.v, ToPrettyString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a
@@ -255,8 +293,14 @@ func (a *Assertion) Has(expect interface{}, msg ...string) *Assertion {
 
 // Contains asserts that the wrapped value v has a method named 'Contains' that returns true when passed expect.
 // It reports an error if the method does not exist or returns false.
-func (a *Assertion) Contains(expect interface{}, msg ...string) *Assertion {
+func (a *Assertion) Contains(expect any, msg ...string) *Assertion {
 	a.t.Helper()
+
+	if isNil(reflect.ValueOf(a.v)) {
+		str := `method 'Contains' not found on type <nil>`
+		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
+		return a
+	}
 
 	m := reflect.ValueOf(a.v).MethodByName("Contains")
 	if !m.IsValid() {
@@ -273,7 +317,7 @@ func (a *Assertion) Contains(expect interface{}, msg ...string) *Assertion {
 
 	ret := m.Call([]reflect.Value{reflect.ValueOf(expect)})
 	if !ret[0].Bool() {
-		str := fmt.Sprintf(`method 'Contains' on type %T should return true when using param %#v, but it does not`, a.v, expect)
+		str := fmt.Sprintf(`method 'Contains' on type %T should return true when using param %s, but it does not`, a.v, ToPrettyString(expect))
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}
 	return a

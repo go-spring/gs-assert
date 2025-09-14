@@ -116,7 +116,7 @@ expected: %q`, a.v, expect)
 // If either string is invalid JSON, the test will fail with the unmarshal error.
 func (a *StringAssertion) JSONEqual(expect string, msg ...string) *StringAssertion {
 	a.t.Helper()
-	var actualJSON interface{}
+	var actualJSON any
 	if err := json.Unmarshal([]byte(a.v), &actualJSON); err != nil {
 		str := fmt.Sprintf(`expected strings to be JSON-equal, but failed to unmarshal actual value
   actual: %q
@@ -124,7 +124,7 @@ func (a *StringAssertion) JSONEqual(expect string, msg ...string) *StringAsserti
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 		return a
 	}
-	var expectedJSON interface{}
+	var expectedJSON any
 	if err := json.Unmarshal([]byte(expect), &expectedJSON); err != nil {
 		str := fmt.Sprintf(`expected strings to be JSON-equal, but failed to unmarshal expected value
 expected: %q

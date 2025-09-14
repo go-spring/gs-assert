@@ -188,7 +188,7 @@ func (a *NumberAssertion[T]) InDelta(expect T, delta T, msg ...string) *NumberAs
 	if diff < 0 {
 		diff = -diff
 	}
-	if diff > delta {
+	if diff > delta { // todo (lvan100) 精度问题
 		str := fmt.Sprintf(`expected number to be within ±%v of %v, but it is %v`, delta, expect, a.v)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
 	}

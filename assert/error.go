@@ -64,8 +64,8 @@ func (a *ErrorAssertion) NotNil(msg ...string) *ErrorAssertion {
 // Is reports a test failure if the error is not the same as the given error.
 func (a *ErrorAssertion) Is(target error, msg ...string) *ErrorAssertion {
 	a.t.Helper()
-	if !errors.Is(target, a.v) {
-		str := fmt.Sprintf(`expected error to be target (according to errors.Is), but they are different 
+	if !errors.Is(a.v, target) {
+		str := fmt.Sprintf(`expected error to be target (according to errors.Is), but they are different
   actual: %v
 expected: %v`, a.v, target)
 		internal.Fail(a.t, a.fatalOnFailure, str, msg...)
@@ -76,7 +76,7 @@ expected: %v`, a.v, target)
 // NotIs reports a test failure if the error is the same as the given error.
 func (a *ErrorAssertion) NotIs(target error, msg ...string) *ErrorAssertion {
 	a.t.Helper()
-	if errors.Is(target, a.v) {
+	if errors.Is(a.v, target) {
 		str := fmt.Sprintf(`expected error not to be target (according to errors.Is), but they are equal 
   actual: %v
 expected: %v`, a.v, target)
